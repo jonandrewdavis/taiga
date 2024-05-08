@@ -1,0 +1,86 @@
+[gd_scene load_steps=2 format=3 uid="uid://cf8xaqfn78y5l"]
+
+[ext_resource type="Script" path="res://MainMenu.gd" id="1_r7uv3"]
+
+[node name="Main" type="Node"]
+
+[node name="MainWorld" type="Node3D" parent="."]
+
+[node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://demo_level/world_basic.tscn")
+spawn_path = NodePath("../MainWorld")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("res://player/character_body_souls_base.tscn")
+spawn_path = NodePath("../MainWorld")
+
+[node name="MainMenu" type="CanvasLayer" parent="."]
+
+[node name="Control" type="Control" parent="MainMenu" node_paths=PackedStringArray("world_ref")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r7uv3")
+world_ref = NodePath("../../MainWorld")
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu/Control"]
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -148.5
+offset_right = 200.0
+offset_bottom = 148.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Control/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Nickname
+"
+
+[node name="Nickname" type="LineEdit" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "IP"
+
+[node name="IP" type="LineEdit" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Host" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Host"
+
+[node name="Join" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Join"
+
+[node name="Quit" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Quit
+"
+
+[node name="Error" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "ERROR"
+
+[connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Host" to="MainMenu/Control" method="_on_host_pressed"]
+[connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Join" to="MainMenu/Control" method="_on_join_pressed"]
+[connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Quit" to="MainMenu/Control" method="_on_quit_pressed"]
