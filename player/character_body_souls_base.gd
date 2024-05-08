@@ -130,7 +130,7 @@ signal ladder_finished
 
 # State management
 enum state {SPAWN,FREE,STATIC_ACTION,DYNAMIC_ACTION,DODGE,SPRINT,LADDER,ATTACK}
-@export var current_state = state.STATIC_ACTION : set = change_state
+@onready var current_state = state.STATIC_ACTION : set = change_state
 signal changed_state
 
 func _ready():

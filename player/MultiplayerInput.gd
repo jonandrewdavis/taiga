@@ -2,7 +2,6 @@ extends MultiplayerSynchronizer
 
 @export var player: CharacterBodySoulsBase
 
-
 # Player inputs
 @export var sync_input_dir: Vector2
 @export var sync_secondary_action: bool
@@ -11,9 +10,9 @@ extends MultiplayerSynchronizer
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	set_physics_process(false)
-	set_process(get_multiplayer_authority() == multiplayer.get_unique_id())
-	set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
-	set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_process(false)
+	set_process_unhandled_input(false)
+	set_process_input(false)
 
 func _process(_delta):
 	sync_input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")

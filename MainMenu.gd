@@ -6,6 +6,8 @@ var quick_quit_enabled = true
 
 @export var world_ref: Node3D
 
+# TODO: Better entry point
+
 @onready var ip_ref = $MarginContainer/VBoxContainer/IP
 @onready var nickname = $MarginContainer/VBoxContainer/Nickname
 #@onready var color_button = $Panel/MarginContainer/VBoxContainer/ColorPickerButton
