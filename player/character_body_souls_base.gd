@@ -138,7 +138,7 @@ signal changed_state
 ## speed
 ## strafing
 ## sync_player_is_on_floor (NOTE: Updated in the animation tree... sucks)
-@export var sync_player_is_on_floor: bool
+@export var sync_player_is_on_floor: bool = true
 
 # TODO: The clients need a set of information they don't have
 # about state, falling, etc. dodging
@@ -150,6 +150,7 @@ signal changed_state
 ## player_input.sync_input_dir
 ## camera_y
 ## secondary_pressed
+## TODO: Camera info passed up for the states thate require camera checking.
 var server_id
 @export var player_input: MultiplayerSynchronizer
 
@@ -157,12 +158,11 @@ func _enter_tree():
 	# Server owns all characters, and puppets, however the enter get owned:
 	# now, for the input...
 	server_id = str(name).to_int()
-	set_multiplayer_authority(str(name).to_int())	
-	#player_input.set_multiplayer_authority(str(name).to_int())
+	player_input.set_multiplayer_authority(str(name).to_int())
 
 func _ready():
-	#set_process(get_multiplayer_authority() == multiplayer.get_unique_id())
-	#set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	#set_process(multiplayer.is_server())
+	#set_physics_process(multiplayer.is_server())
 	#set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 	#set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 
@@ -253,7 +253,7 @@ func _physics_process(_delta):
 	
 func apply_gravity(_delta):
 	sync_player_is_on_floor = is_on_floor()
-	if !is_on_floor() \
+	if !sync_player_is_on_floor \
 	&& current_state != state.LADDER:
 		velocity.y -= gravity * _delta
 		
@@ -264,7 +264,7 @@ func free_movement():
 	var new_direction = calc_direction()
 	if new_direction:
 		var rate : float # imiates directional change acceleration rate
-		if is_on_floor():
+		if sync_player_is_on_floor:
 			rate = .5
 		else:
 			rate = .1 # Makes it hard to change directions once in midair
@@ -330,6 +330,9 @@ func calc_direction():
 	var new_direction = (forward_vector * player_input.sync_input_dir.y + horizontal_vector * player_input.sync_input_dir.x)
 	return new_direction
 
+#@rpc('any_peer')
+#func attack(_is_special_attack : bool = false):
+	#if multiplayer.is_server():
 @rpc('any_peer', 'call_local')
 func attack(_is_special_attack : bool = false):
 	current_state = state.ATTACK
@@ -346,7 +349,7 @@ func attack(_is_special_attack : bool = false):
 	if current_state == state.ATTACK:
 		current_state = state.FREE
 
-@rpc("any_peer", "call_local")
+@rpc('any_peer', 'call_local')
 func air_attack():
 	air_attack_started.emit()
 	current_state = state.DYNAMIC_ACTION
@@ -363,9 +366,9 @@ func fall_check():
 	## When you land again, compare the distances of both location y values, if greater
 	## than the hard_landing_height, then trigger a hard landing. Otherwise, 
 	## clear the last_altitude variable.
-	if !is_on_floor() && last_altitude == null: 
+	if !sync_player_is_on_floor && last_altitude == null: 
 		last_altitude = global_position
-	if is_on_floor() && last_altitude != null:
+	if sync_player_is_on_floor && last_altitude != null:
 		var fall_distance = abs(last_altitude.y - global_position.y)
 		if fall_distance > hard_landing_height:
 			hard_landing()
@@ -381,9 +384,9 @@ func hard_landing():
 		if current_state == state.STATIC_ACTION:
 			current_state = state.FREE
 
-@rpc("any_peer", "call_local")
+@rpc('any_peer', 'call_local')
 func jump():
-	if is_on_floor():
+	if sync_player_is_on_floor:
 		if anim_state_tree:
 			jump_started.emit()
 			anim_length = .5
@@ -462,7 +465,7 @@ func ladder_movement():
 	last_altitude = global_position
 	if interact_loc == "BOTTOM":
 		exit_ladder("TOP") 
-	if is_on_floor():
+	if sync_player_is_on_floor:
 		exit_ladder("BOTTOM")
 	move_and_slide()
 
@@ -619,7 +622,7 @@ func hit(_who, _by_what):
 func heal(_by_what):
 	health_received.emit(_by_what)
 
-@rpc("any_peer", "call_local")
+@rpc('any_peer', 'call_local')
 func block():
 	current_state = state.STATIC_ACTION
 	block_started.emit()
