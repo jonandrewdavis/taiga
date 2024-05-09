@@ -10,7 +10,8 @@ class_name SpawnSite
 @onready var audio_stream_player = $AudioStreamPlayer
 
 func _ready():
-	anim_player.play("idle",.2)
+	pass
+	#anim_player.play("idle",.2)
 
 func activate(_requestor: CharacterBodySoulsBase,_sensor_loc = null):
 	if _requestor.has_method("start_interact"):
@@ -21,7 +22,6 @@ func activate(_requestor: CharacterBodySoulsBase,_sensor_loc = null):
 		_requestor.queue_free()
 		await get_tree().create_timer(1).timeout
 		anim_player.play("idle",.2)
-	
 
 func respawn():
 	if reset_level:

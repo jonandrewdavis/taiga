@@ -160,9 +160,14 @@ locked = true
 
 [node name="AreaCam" parent="." instance=ExtResource("4_l2bc3")]
 transform = Transform3D(-0.0787201, 0, 0.996897, 0, 1, 0, -0.996897, 0, -0.0787201, 0.908271, 0, 11.4209)
+monitoring = false
+monitorable = false
 
 [node name="CharacterBodyEnemyBase" parent="." instance=ExtResource("5_ixeet")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.28031, 0.14465, -3.97313)
+
+[node name="CharacterBodyEnemyBase2" parent="." instance=ExtResource("5_ixeet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.28937, 0, -0.188309)
 
 [node name="ChestObject" parent="." instance=ExtResource("7_nmq7w")]
 transform = Transform3D(0.778616, 0, 0.627501, 0, 1, 0, -0.627501, 0, 0.778616, -8.02334, 1.43051e-06, -5.20081)
@@ -170,9 +175,6 @@ transform = Transform3D(0.778616, 0, 0.627501, 0, 1, 0, -0.627501, 0, 0.778616, 
 [node name="LeverObject" parent="." node_paths=PackedStringArray("node_to_control") instance=ExtResource("8_t3kfh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19806, 4.76837e-07, -4.05574)
 node_to_control = NodePath("../DoorObject2")
-
-[node name="CharacterBodyEnemyBase2" parent="." instance=ExtResource("5_ixeet")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.28937, 0, -0.188309)
 
 [node name="SpawnSite" parent="." instance=ExtResource("9_75vfq")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.35037, 0, -0.500871)

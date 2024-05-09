@@ -14,8 +14,7 @@ class_name CharacterBodySoulsBase
 ## Manages all animations generally pulling info it needs from states and substates.
 @export var anim_state_tree : AnimationTreeSoulsBase
 #### When the anim_state_tree starts a new animatino, this variable updates with it's length
-@onready var anim_length = .5
-
+@export var anim_length = .5
 
 ## default/1st camera is a follow cam.
 @onready var current_camera = get_viewport().get_camera_3d()
@@ -111,14 +110,14 @@ signal dodge_ended
 signal sprint_started
 
 # Movement Mechanics
-var input_dir : Vector2
+#var input_dir : Vector2
 @export var default_speed = 4.0
 @export var walk_speed = 1.0
-@onready var speed = default_speed
+@export var speed = default_speed
 var direction = Vector3.ZERO
 
 # Strafing
-var strafing :bool = false
+@export var strafing :bool = false
 @onready var strafe_cross_product = 0.0
 @onready var move_dot_product = 0.0
 signal strafe_toggled
@@ -130,10 +129,43 @@ signal ladder_finished
 
 # State management
 enum state {SPAWN,FREE,STATIC_ACTION,DYNAMIC_ACTION,DODGE,SPRINT,LADDER,ATTACK}
-@onready var current_state = state.STATIC_ACTION : set = change_state
+@export var current_state = state.STATIC_ACTION : set = change_state
 signal changed_state
 
+## MULTIPLER SYNCS -> Client, down
+## current_state
+## strafing
+## speed
+## strafing
+## sync_player_is_on_floor (NOTE: Updated in the animation tree... sucks)
+@export var sync_player_is_on_floor: bool
+
+# TODO: The clients need a set of information they don't have
+# about state, falling, etc. dodging
+
+# TODO: Figure out a real server authoritative system....... this is not that.
+
+## ASSIGN THESE TO THE USER!!
+## Client MULTIPLAYER INPUTS -> up to server:
+## player_input.sync_input_dir
+## camera_y
+## secondary_pressed
+var server_id
+@export var player_input: MultiplayerSynchronizer
+
+func _enter_tree():
+	# Server owns all characters, and puppets, however the enter get owned:
+	# now, for the input...
+	server_id = str(name).to_int()
+	set_multiplayer_authority(str(name).to_int())	
+	#player_input.set_multiplayer_authority(str(name).to_int())
+
 func _ready():
+	#set_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	#set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	#set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+	#set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+
 	if anim_state_tree:
 		anim_state_tree.animation_measured.connect(_on_animation_measured)
 
@@ -153,7 +185,6 @@ func _ready():
 			
 	if health_system:
 		health_system.died.connect(death)
-		
 		
 	add_child(sprint_timer)
 	sprint_timer.one_shot = true
@@ -178,18 +209,20 @@ func change_state(new_state):
 	match current_state:
 		state.FREE:
 			speed = default_speed
+			$STATE.text = "FREE"
 		state.LADDER:
 			speed = ladder_climb_speed
 		state.DODGE:
+			$STATE.text = "DODGE"
 			speed = dodge_speed
 		state.SPRINT:
 			speed = sprint_speed
 		state.DYNAMIC_ACTION:
 			speed = walk_speed
 		state.STATIC_ACTION:
+			$STATE.text = "SPECIAL ACTION"
 			speed = 0.0
 
-			
 func _physics_process(_delta):
 	match current_state:
 		state.FREE:
@@ -204,103 +237,22 @@ func _physics_process(_delta):
 			dash_movement()
 			rotate_player()
 			
-			
 		state.LADDER:
 			ladder_movement()
 			
 		state.ATTACK:
+			$STATE.text = "ATTACK"
 			dash_movement()
 		
 		state.DYNAMIC_ACTION:
 			free_movement()
-			rotate_player()
-			
+			rotate_player()	
+
 	apply_gravity(_delta)
 	fall_check()
 	
-func _input(_event:InputEvent):
-		# Update current orientation to camera when nothing pressed
-	if !Input.is_anything_pressed():
-		current_camera = get_viewport().get_camera_3d()
-	
-	if _event.is_action_pressed("ui_cancel"):
-		get_tree().quit()
-		
-	## strafe toggle on/off
-	if _event.is_action_pressed("strafe_target"):
-		set_strafe_targeting()
-		
-	# a helper for keyboard controls, not really used for joypad
-	if Input.is_action_pressed("secondary_action"):
-		secondary_action = true
-	else:
-		secondary_action = false
-	
-	if current_state == state.FREE:
-		if is_on_floor():
-			# if interactable exists, activate its action
-			if _event.is_action_pressed("interact"):
-				interact()
-			
-			elif _event.is_action_pressed("jump"):
-				jump()
-				
-			elif _event.is_action_pressed("use_weapon_light"):
-				if secondary_action: # big attack for keyboard
-					attack(secondary_action)
-				else:
-					attack()
-					
-					
-			elif _event.is_action_pressed("use_weapon_strong"):
-				attack(secondary_action) # big attack for joypad
-
-			elif _event.is_action_pressed("dodge_dash"):
-				dodge_or_sprint()
-				
-			elif _event.is_action_released("dodge_dash") \
-			&& sprint_timer.time_left:
-				dodge()
-			
-			elif _event.is_action_pressed("change_primary"):
-				weapon_change()
-			elif _event.is_action_pressed("change_secondary"):
-				gadget_change()
-
-			elif _event.is_action_pressed("use_gadget_strong"): 
-					use_gadget()
-					
-			elif _event.is_action_pressed("use_gadget_light"):
-				if secondary_action:
-					use_gadget()
-				else:
-					start_guard()
-			
-			elif _event.is_action_pressed("change_item"):
-				item_change()
-			elif _event.is_action_pressed("use_item"): 
-				use_item()
-		else: # if not on floor
-			if _event.is_action_pressed("use_weapon_light"):
-				air_attack()
-	
-	elif current_state == state.SPRINT:
-		
-		if _event.is_action_released("dodge_dash"):
-			end_sprint()
-			
-		elif _event.is_action_pressed("jump"):
-				jump()
-				
-	elif current_state == state.LADDER:
-		if _event.is_action_pressed("dodge_dash"):
-			current_state = state.FREE
-				
-	if _event.is_action_released("use_gadget_light"):
-		if not secondary_action:
-			end_guard()
-	
 func apply_gravity(_delta):
+	sync_player_is_on_floor = is_on_floor()
 	if !is_on_floor() \
 	&& current_state != state.LADDER:
 		velocity.y -= gravity * _delta
@@ -309,7 +261,6 @@ func free_movement():
 	# Get the movement orientation from the angles of the player to the camera.
 	# Using only camera's basis rotation created weird speed inconsistencies at downward angles
 	#dodge_movement()
-	input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	var new_direction = calc_direction()
 	if new_direction:
 		var rate : float # imiates directional change acceleration rate
@@ -343,7 +294,7 @@ func rotate_player():
 
 	if freelook: 
 		# FreeCam rotation code, slerps to input oriented to the camera perspective, and only calculates when input is given
-		if input_dir:
+		if player_input.sync_input_dir:
 			var new_direction = calc_direction().normalized()
 			# Rotate the player per the perspective of the camera
 			target_rotation = current_rotation.slerp(Quaternion(Vector3.UP, atan2(new_direction.x, new_direction.z)), 0.2)
@@ -373,11 +324,13 @@ func _on_target_cleared():
 	
 ## calculate and return the direction of movement oriented to the current camera
 func calc_direction():
-	var forward_vector = Vector3(0, 0, 1).rotated(Vector3.UP, current_camera.global_rotation.y)
-	var horizontal_vector = Vector3(1, 0, 0).rotated(Vector3.UP, current_camera.global_rotation.y)
-	var new_direction = (forward_vector * input_dir.y + horizontal_vector * input_dir.x)
+	# CAMERA COMES FROM SYNC / CLIENT
+	var forward_vector = Vector3(0, 0, 1).rotated(Vector3.UP, player_input.sync_camera_y)
+	var horizontal_vector = Vector3(1, 0, 0).rotated(Vector3.UP, player_input.sync_camera_y)
+	var new_direction = (forward_vector * player_input.sync_input_dir.y + horizontal_vector * player_input.sync_input_dir.x)
 	return new_direction
 
+@rpc('any_peer', 'call_local')
 func attack(_is_special_attack : bool = false):
 	current_state = state.ATTACK
 	if _is_special_attack:
@@ -393,7 +346,7 @@ func attack(_is_special_attack : bool = false):
 	if current_state == state.ATTACK:
 		current_state = state.FREE
 
-		
+@rpc("any_peer", "call_local")
 func air_attack():
 	air_attack_started.emit()
 	current_state = state.DYNAMIC_ACTION
@@ -404,8 +357,6 @@ func air_attack():
 	await get_tree().create_timer(anim_length *.5).timeout
 	current_state = state.FREE
 	
-		
-
 
 func fall_check():
 	## If you leave the floor, store last position.
@@ -429,7 +380,8 @@ func hard_landing():
 		await get_tree().create_timer(anim_length).timeout
 		if current_state == state.STATIC_ACTION:
 			current_state = state.FREE
-	
+
+@rpc("any_peer", "call_local")
 func jump():
 	if is_on_floor():
 		if anim_state_tree:
@@ -450,20 +402,23 @@ func dash(_new_direction : Vector3 = Vector3.FORWARD, _duration = .1):
 	#speed = default_speed
 	await get_tree().create_timer(_duration).timeout
 	direction = Vector3.ZERO
-	
+
+# TODO: Why no rpc here?
+@rpc('any_peer', 'call_local')			
 func dodge_or_sprint():
 	if sprint_timer.is_stopped():
 		sprint_timer.start(.3)
 		await sprint_timer.timeout
 		if current_state == state.FREE \
-			&& input_dir:
+			&& player_input.sync_input_dir:
 				current_state = state.SPRINT
 				sprint_started.emit()
-		
+
+@rpc('any_peer', 'call_local')			
 func end_sprint():
 	if current_state == state.SPRINT:
 		current_state = state.FREE
-		
+
 func dash_movement():
 	var rate = .1
 	velocity.x = move_toward(velocity.x, direction.x * speed, rate)
@@ -471,34 +426,38 @@ func dash_movement():
 	# required in the process function states for dodges/dashes
 	move_and_slide()
 	
+# TODO: Why no rpc here?
+@rpc('any_peer', 'call_local')
 func dodge(): 
 	# Burst of speed toward an input direction, or backwards
 	current_state = state.DODGE
 	can_be_hurt = false
 	sprint_timer.stop()
 	## uses timer rather than 'await' because 'await' stops processes like gravity affecting velocity.
-	if input_dir: # Dodge toward direction of input_dir 
+	if player_input.sync_input_dir: # Dodge toward direction of player_input.sync_input_dir 
 		direction = calc_direction()
 		dodge_started.emit()
 	else: # Dodge toward the 'BACK' of your global position
 		var backward_dir =(global_position - to_global(Vector3.BACK)).normalized()
 		velocity = backward_dir * (dodge_speed * .75)
 		dodge_started.emit()
-	if anim_state_tree:
-		await anim_state_tree.animation_measured
+	#if anim_state_tree:
+		#await anim_state_tree.animation_measured
+		#print('never gets here', get_multiplayer_authority())
 	# After timer finishes, return to pre-dodge state
 	dodge_timer.start(anim_length * .7)
-	
+
 func _on_dodge_timer_timeout():
 	dodge_ended.emit()
 	speed = default_speed
 	current_state = state.FREE
 	can_be_hurt = true
 
+
+@rpc('any_peer', 'call_local')			
 func ladder_movement():
 	# move up and down ladders per the indicated direction
-	input_dir = Input.get_vector("move_left", "move_right", "move_up", "move_down")
-	velocity = (Vector3.DOWN * input_dir.y) * speed
+	velocity = (Vector3.DOWN * player_input.sync_input_dir.y) * speed
 	# exiting ladder state triggers:
 	last_altitude = global_position
 	if interact_loc == "BOTTOM":
@@ -507,6 +466,7 @@ func ladder_movement():
 		exit_ladder("BOTTOM")
 	move_and_slide()
 
+@rpc('any_peer', 'call_local')
 func start_ladder(top_or_bottom,mount_transform):
 	ladder_started.emit(top_or_bottom)
 	if anim_state_tree:
@@ -517,6 +477,7 @@ func start_ladder(top_or_bottom,mount_transform):
 	await tween.finished
 	current_state = state.LADDER
 	
+@rpc('any_peer', 'call_local')
 func exit_ladder(exit_loc):
 	current_state = state.STATIC_ACTION
 	ladder_finished.emit(exit_loc)
@@ -533,19 +494,23 @@ func exit_ladder(exit_loc):
 	await tween.finished
 	current_state = state.FREE
 
+@rpc('any_peer', 'call_local')
 func _on_animation_measured(_new_length):
 	anim_length = _new_length - .05 # offset slightly for the process frame
 
+@rpc('any_peer', 'call_local')
 func _on_interact_updated(_interactable, _int_loc):
 	interactable = _interactable
 	interact_loc = _int_loc
 	
+@rpc('any_peer', 'call_local')
 func interact():
 	## interactions are a handshake. The interactable will reply back with more
 	## info or actions if needed.
 	if interactable:
 		interactable.activate(self,interact_loc)
 
+@rpc('any_peer', 'call_local')
 func start_interact(interact_type = "GENERIC", desired_transform :Transform3D = global_transform, move_time : float = .5):
 	current_state = state.STATIC_ACTION
 	# After timer finishes, return to pre-dodge state
@@ -559,7 +524,7 @@ func start_interact(interact_type = "GENERIC", desired_transform :Transform3D = 
 	current_state = state.FREE
 
 
-
+@rpc('any_peer', 'call_local')
 func weapon_change():
 	current_state = state.DYNAMIC_ACTION
 	weapon_change_started.emit()
@@ -582,7 +547,8 @@ func _on_gadget_equipment_changed(_new_gadget:EquipmentObject):
 
 func _on_inventory_item_used(_item):
 	current_item = _item
-	
+
+@rpc('any_peer', 'call_local')
 func gadget_change():
 	current_state = state.DYNAMIC_ACTION
 	gadget_change_started.emit()
@@ -597,6 +563,7 @@ func gadget_change():
 	await get_tree().create_timer(anim_length *.5).timeout
 	current_state = state.FREE
 
+@rpc('any_peer', 'call_local')
 func item_change():
 	current_state = state.DYNAMIC_ACTION
 	item_change_started.emit()
@@ -609,6 +576,7 @@ func item_change():
 	await get_tree().create_timer(anim_length *.5).timeout
 	current_state = state.FREE
 	
+@rpc('any_peer', 'call_local')
 func start_guard(): # Guarding, and for a short window, parring is possible
 	guarding = true
 	parry_active = true
@@ -616,11 +584,13 @@ func start_guard(): # Guarding, and for a short window, parring is possible
 	await get_tree().create_timer(parry_window).timeout
 	parry_active = false
 	
+@rpc('any_peer', 'call_local')
 func end_guard():
 	guarding = false
 	parry_active = false
 	current_state = state.FREE
 
+@rpc('any_peer', 'call_local')
 func use_gadget(): # emits to start the gadget, and runs some timers before stopping the gadget
 	current_state = state.STATIC_ACTION
 	gadget_started.emit()
@@ -649,6 +619,7 @@ func hit(_who, _by_what):
 func heal(_by_what):
 	health_received.emit(_by_what)
 
+@rpc("any_peer", "call_local")
 func block():
 	current_state = state.STATIC_ACTION
 	block_started.emit()
@@ -658,6 +629,7 @@ func block():
 	if current_state == state.STATIC_ACTION:
 		current_state = state.DYNAMIC_ACTION
 
+@rpc('any_peer', 'call_local')
 func parry():
 	current_state = state.STATIC_ACTION
 	can_be_hurt = false
@@ -669,6 +641,7 @@ func parry():
 		current_state = state.FREE
 	can_be_hurt = true
 
+@rpc('any_peer', 'call_local')
 func hurt():
 	current_state = state.STATIC_ACTION
 	can_be_hurt = false
@@ -681,6 +654,7 @@ func hurt():
 			current_state = state.FREE
 		can_be_hurt = true
 
+@rpc('any_peer', 'call_local')
 func use_item():
 	current_state = state.DYNAMIC_ACTION
 	use_item_started.emit()
@@ -692,6 +666,7 @@ func use_item():
 	if current_state == state.DYNAMIC_ACTION:
 		current_state = state.FREE
 
+@rpc('any_peer', 'call_local')
 func death():
 	current_state = state.STATIC_ACTION
 	can_be_hurt = false

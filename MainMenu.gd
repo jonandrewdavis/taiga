@@ -126,7 +126,6 @@ func ready_server_world():
 		
 		for id in multiplayer.get_peers():
 			add_player_in_server(id)
-		
 
 func add_player_in_server(id: int):
 	var character_scene = load("res://player/character_body_souls_base.tscn")

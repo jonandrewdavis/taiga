@@ -34,11 +34,11 @@ func _ready():
 	
 func _rando_foot_play():
 	footsteps.pitch_scale = randf_range(.9,1.2)
-	footsteps.play()
+	#footsteps.play()
 
 func _rando_pants_play():
 	pant_swish.pitch_scale = randf_range(.9,1.2)
-	pant_swish.play()
+	#pant_swish.play()
 
 func _on_foot_stepped():
 	_rando_foot_play()

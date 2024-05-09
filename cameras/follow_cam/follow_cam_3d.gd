@@ -36,8 +36,20 @@ signal target_cleared
 
 var current_cam_buffer = true
 
+# MULTIPLAYER: 
+func _enter_tree():
+	print('hmm', str(get_parent().name).to_int())
+	set_multiplayer_authority(str(get_parent().name).to_int())
 
 func _ready():
+	set_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())	
+	if is_multiplayer_authority():
+		ready_camera()
+
+func ready_camera():
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			
 	if follow_target.has_signal("strafe_toggled"): ## to avoid hard coding using a SignalSwitch

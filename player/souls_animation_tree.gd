@@ -19,7 +19,9 @@ class_name AnimationTreeSoulsBase
 @onready var attack_timer = Timer.new()
 @onready var hurt_count = 1
 @onready var interact_type :String = "GENERIC"
-@onready var anim_length
+
+# Multiplayer edit here:
+@onready var anim_length: int
 
 var last_oneshot = "Attack"
 var lerp_movement
@@ -198,7 +200,7 @@ func _on_ladder_finished(top_or_bottom):
 	ladder_state_machine.travel("LadderEnd_" + top_or_bottom)
 	
 func set_ladder():
-	set("parameters/MovementStates/LADDER_tree/LadderBlend/blend_position",-player_node.input_dir.y)
+	set("parameters/MovementStates/LADDER_tree/LadderBlend/blend_position",-player_node.player_input.sync_input_dir.y)
 	
 func set_strafe():
 	# Strafe left and right animations run by the player's velocity cross product
@@ -208,14 +210,14 @@ func set_strafe():
 		new_blend *= .25 # Force a walk animiation
 	else:
 		# apply input as a magnatude for more natural run versus walk animation blending
-		new_blend *= Vector2(abs(player_node.input_dir.x),abs(player_node.input_dir.y)) 
+		new_blend *= Vector2(abs(player_node.player_input.sync_input_dir.x),abs(player_node.player_input.sync_input_dir.y)) 
 	lerp_movement = get("parameters/MovementStates/" + weapon_type + "_tree/MoveStrafe/blend_position")
 	lerp_movement = lerp(lerp_movement,new_blend,.2)
 	set("parameters/MovementStates/" + weapon_type + "_tree/MoveStrafe/blend_position", lerp_movement)
 
 func set_free_move():
 	# Non-strafing "free" movement, is just the forward input direction.
-	var new_blend = Vector2(0,abs(player_node.input_dir.x) + abs(player_node.input_dir.y))
+	var new_blend = Vector2(0,abs(player_node.player_input.sync_input_dir.x) + abs(player_node.player_input.sync_input_dir.y))
 	if player_node.current_state == player_node.state.DYNAMIC_ACTION:
 		new_blend *= .4 # force a walk speed
 	lerp_movement = get("parameters/MovementStates/" + weapon_type + "_tree/MoveStrafe/blend_position")

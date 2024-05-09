@@ -79,7 +79,6 @@ text = "Quit
 
 [node name="Error" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
-text = "ERROR"
 
 [connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Host" to="MainMenu/Control" method="_on_host_pressed"]
 [connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Join" to="MainMenu/Control" method="_on_join_pressed"]
