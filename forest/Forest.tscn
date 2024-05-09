@@ -1,0 +1,59 @@
+[gd_scene load_steps=11 format=3 uid="uid://blp8d4os7dl3w"]
+
+[ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
+[ext_resource type="Script" path="res://forest/Instancer.gd" id="2_41h2q"]
+[ext_resource type="Material" uid="uid://bensj7wrago0n" path="res://demo_level/world_materials/citybrick01.tres" id="3_u8b8b"]
+[ext_resource type="Material" uid="uid://bu351ebqnnb6x" path="res://demo_level/world_materials/crate01.tres" id="4_ddy55"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_cdrrn"]
+size = Vector2(200, 200)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_mwog6"]
+size = Vector3(100, 0.25, 100)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_2v4np"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_b6jtr"]
+noise = SubResource("FastNoiseLite_2v4np")
+
+[sub_resource type="BoxMesh" id="BoxMesh_5beyt"]
+material = ExtResource("3_u8b8b")
+size = Vector3(2, 2, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_8eieg"]
+material = ExtResource("4_ddy55")
+
+[node name="Forest" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("1_hyo65")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+light_angular_distance = 5.0
+shadow_enabled = true
+
+[node name="FloorTemp" type="MeshInstance3D" parent="."]
+mesh = SubResource("PlaneMesh_cdrrn")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="FloorTemp"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTemp/StaticBody3D"]
+shape = SubResource("BoxShape3D_mwog6")
+
+[node name="TreeInstance" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00728405, 0, 0)
+script = ExtResource("2_41h2q")
+ground_chunk_mesh = NodePath("../FloorTemp")
+pos_randomize = 30.0
+terrain_height = 4.0
+scale_randomize = 0.925
+instance_Y_rot = 0.095
+heightmap = SubResource("NoiseTexture2D_b6jtr")
+instance_mesh = SubResource("BoxMesh_5beyt")
+
+[node name="FakePlayer" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.398543, 0.109846, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.579477, 2.25857)
+mesh = SubResource("BoxMesh_8eieg")

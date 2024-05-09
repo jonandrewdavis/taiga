@@ -70,7 +70,7 @@ func _on_connected_fail():
 func start_game_host():
 	# If we're a client, we just hide and send our join info.
 	hide()
-	change_level(load("res://demo_level/world_basic.tscn"))
+	change_level(load("res://forest/Forest.tscn"))
 	add_player_in_server(1)
 
 func start_game_client():
