@@ -42,17 +42,22 @@ var v_scale: float = 1
 @onready var first_update= true
  
 func _ready():
-	var players = get_tree().get_nodes_in_group("Player");
-	#if players.size():
-		#print('await', players)
-		#
-		#player_node = players[0]
-		#create_multimesh()
-	#else:
-		#await get_tree().create_timer(1.0).timeout
-		#_ready()
+	if Engine.is_editor_hint():
+		create_multimesh()
+		return
+	else:
+		var players = get_tree().get_nodes_in_group("Player");
+		if players.size():
+			player_node = players[0]
+			print(player_node)
+			await get_tree().create_timer(2.0).timeout
+			create_multimesh()
+		else:
+			await get_tree().create_timer(2.0).timeout
+			_ready()	
 	
 func create_multimesh():
+	print('ready create multi', player_node.global_position)
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized
 	h_scale = get_node(ground_chunk_mesh).scale.x # could be x or z, doesn not matter as they should be the same
 	v_scale = get_node(ground_chunk_mesh).scale.y
@@ -66,9 +71,12 @@ func create_multimesh():
 	multi_mesh.mesh = instance_mesh 
 	instance_rows = sqrt(instance_amount) #rounded down to integer
 	offset = round(instance_amount/instance_rows) #rounded up/down to nearest integer
-	
+
+	print('got z')
 	#wait for map to load before continuing
-	await heightmap.changed
+	if Engine.is_editor_hint():
+		await heightmap.changed
+	print('got this far')
 	hmap_img = heightmap.get_image()
 	width = hmap_img.get_width()
 	height = hmap_img.get_height()
@@ -84,7 +92,6 @@ func create_multimesh():
 	_update()
  
 func _update():
-	print('updating')
 	#on each update, move the center to player
 	self.global_position = Vector3(player_node.global_position.x,0.0,player_node.global_position.z).snapped(Vector3(1,0,1));
 	multi_mesh_instance.multimesh = distribute_meshes()

@@ -194,8 +194,3 @@ exit={
 3d_physics/layer_3="Targets"
 3d_physics/layer_4="Interactable"
 3d_physics/layer_5="Ladder"
-
-[rendering]
-
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"

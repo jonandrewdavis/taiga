@@ -1,8 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://blp8d4os7dl3w"]
+[gd_scene load_steps=24 format=3 uid="uid://blp8d4os7dl3w"]
 
 [ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
 [ext_resource type="Script" path="res://forest/Instancer.gd" id="2_41h2q"]
-[ext_resource type="Material" uid="uid://bensj7wrago0n" path="res://demo_level/world_materials/citybrick01.tres" id="3_u8b8b"]
+[ext_resource type="Material" uid="uid://bu351ebqnnb6x" path="res://demo_level/world_materials/crate01.tres" id="3_1ji4j"]
+[ext_resource type="Material" uid="uid://p4qtrvwp1i8t" path="res://demo_level/world_materials/floor.tres" id="3_a4dm5"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="5_k6ry7"]
 [ext_resource type="Resource" path="res://assets/hmap/data.hterrain" id="6_sq2yc"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="7_brtfb"]
@@ -17,19 +18,29 @@
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_detail_layer.gd" id="16_dettw"]
 [ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="17_mo32o"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_2v4np"]
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_c2ja4"]
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_b6jtr"]
-noise = SubResource("FastNoiseLite_2v4np")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_21je4"]
+width = 1001
+height = 1001
+seamless = true
+noise = SubResource("FastNoiseLite_c2ja4")
 
-[sub_resource type="BoxMesh" id="BoxMesh_5beyt"]
-material = ExtResource("3_u8b8b")
-size = Vector3(2, 2, 2)
+[sub_resource type="BoxMesh" id="BoxMesh_p1k8b"]
+material = ExtResource("3_1ji4j")
+size = Vector3(0.4, 7, 0.4)
 
 [sub_resource type="Resource" id="Resource_7u5g1"]
 script = ExtResource("7_brtfb")
 mode = 0
 textures = [[ExtResource("8_yujuw"), ExtResource("9_ht1dx"), ExtResource("10_lsvvg"), ExtResource("11_j3b6j")], [ExtResource("12_xlypv"), ExtResource("13_s7vij"), ExtResource("14_jpdh5"), ExtResource("15_3vfjw")]]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_vhtxe"]
+size = Vector3(200, 1, 200)
+
+[sub_resource type="BoxMesh" id="BoxMesh_donn6"]
+material = ExtResource("3_a4dm5")
+size = Vector3(200, 1, 200)
 
 [node name="Forest" type="Node3D"]
 
@@ -39,6 +50,7 @@ environment = ExtResource("1_hyo65")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 light_color = Color(0.912104, 0.840649, 0.671484, 1)
 light_energy = 0.4
+light_indirect_energy = 0.0
 light_angular_distance = 57.85
 shadow_enabled = true
 
@@ -46,25 +58,29 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 37.665, 0)
 gizmo_extents = 1.35
 
-[node name="TreeInstance" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00728405, 0, 0)
-script = ExtResource("2_41h2q")
-pos_randomize = 30.0
-terrain_height = 4.0
-scale_randomize = 0.925
-instance_Y_rot = 0.095
-heightmap = SubResource("NoiseTexture2D_b6jtr")
-instance_mesh = SubResource("BoxMesh_5beyt")
-
 [node name="FakePlayer" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.398543, 0.109846, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.89261, -10.2175, -2.48124)
+
+[node name="TreeInstance" type="Marker3D" parent="." node_paths=PackedStringArray("player_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -2)
+script = ExtResource("2_41h2q")
+player_node = NodePath("../FakePlayer")
+instance_amount = 400
+ground_chunk_mesh = NodePath("../StaticBody3D/MeshInstance3D")
+pos_randomize = 40.0
+rot_y_randomize = 0.5
+rot_x_randomize = 0.2
+heightmap = SubResource("NoiseTexture2D_21je4")
+instance_mesh = SubResource("BoxMesh_p1k8b")
+update_frequency = 0.1
 
 [node name="HTerrain" type="Node3D" parent="."]
+visible = false
 script = ExtResource("5_k6ry7")
 centered = true
 _terrain_data = ExtResource("6_sq2yc")
 chunk_size = 32
-collision_enabled = true
+collision_enabled = false
 collision_layer = 1
 collision_mask = 1
 shader_type = "Classic4"
@@ -90,3 +106,12 @@ shader_params/u_bottom_ao = null
 shader_params/u_instance_scale = Vector3(1, 1, 1)
 shader_params/u_roughness = 0.9
 metadata/_editor_icon = ExtResource("17_mo32o")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_vhtxe")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("BoxMesh_donn6")
+skeleton = NodePath("../..")

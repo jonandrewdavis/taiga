@@ -1,14 +1,22 @@
 [gd_resource type="Environment" load_steps=3 format=3 uid="uid://cslvvwcb7yhg0"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ptjwc"]
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_erxp2"]
+sky_curve = 6.33366
+ground_curve = 0.04
+sun_angle_max = 30.25
+sun_curve = 0.0923359
 
 [sub_resource type="Sky" id="Sky_761ok"]
-sky_material = SubResource("ProceduralSkyMaterial_ptjwc")
+sky_material = SubResource("ProceduralSkyMaterial_erxp2")
 
 [resource]
 background_mode = 2
 sky = SubResource("Sky_761ok")
 reflected_light_source = 2
 tonemap_mode = 3
-tonemap_exposure = 0.84
+tonemap_exposure = 0.92
 volumetric_fog_enabled = true
+volumetric_fog_density = 0.0765
+volumetric_fog_albedo = Color(0.477612, 0.568062, 0.679988, 1)
+volumetric_fog_detail_spread = 3.21532
+volumetric_fog_ambient_inject = 2.07
