@@ -24,6 +24,10 @@ buses/default_bus_layout="res://audio/default_bus_layout.tres"
 window/size/viewport_width=1920
 window/size/viewport_height=1080
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/zylann.hterrain/plugin.cfg")
+
 [input]
 
 ui_select={

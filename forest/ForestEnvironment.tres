@@ -1,3 +1,14 @@
-[gd_resource type="Environment" format=3 uid="uid://cslvvwcb7yhg0"]
+[gd_resource type="Environment" load_steps=3 format=3 uid="uid://cslvvwcb7yhg0"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ptjwc"]
+
+[sub_resource type="Sky" id="Sky_761ok"]
+sky_material = SubResource("ProceduralSkyMaterial_ptjwc")
 
 [resource]
+background_mode = 2
+sky = SubResource("Sky_761ok")
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_exposure = 0.84
+volumetric_fog_enabled = true

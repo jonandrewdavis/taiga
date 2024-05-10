@@ -43,14 +43,14 @@ var v_scale: float = 1
  
 func _ready():
 	var players = get_tree().get_nodes_in_group("Player");
-	if players.size():
-		print('await', players)
-		
-		player_node = players[0]
-		create_multimesh()
-	else:
-		await get_tree().create_timer(1.0).timeout
-		_ready()
+	#if players.size():
+		#print('await', players)
+		#
+		#player_node = players[0]
+		#create_multimesh()
+	#else:
+		#await get_tree().create_timer(1.0).timeout
+		#_ready()
 	
 func create_multimesh():
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized

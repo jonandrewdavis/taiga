@@ -165,6 +165,8 @@ func _ready():
 	#set_physics_process(multiplayer.is_server())
 	#set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 	#set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+	
+	global_position = Vector3(0, 37.665, 0)
 
 	if anim_state_tree:
 		anim_state_tree.animation_measured.connect(_on_animation_measured)
@@ -223,7 +225,10 @@ func change_state(new_state):
 			$STATE.text = "SPECIAL ACTION"
 			speed = 0.0
 
+# TODO: Fix bug where we are always going back to free if we are in the air.
 func _physics_process(_delta):
+	$STATE.text = state.keys()[current_state]
+	sync_player_is_on_floor = is_on_floor()
 	match current_state:
 		state.FREE:
 			rotate_player()
@@ -241,10 +246,10 @@ func _physics_process(_delta):
 			ladder_movement()
 			
 		state.ATTACK:
-			$STATE.text = "ATTACK"
 			dash_movement()
 		
 		state.DYNAMIC_ACTION:
+
 			free_movement()
 			rotate_player()	
 
@@ -252,7 +257,6 @@ func _physics_process(_delta):
 	fall_check()
 	
 func apply_gravity(_delta):
-	sync_player_is_on_floor = is_on_floor()
 	if !sync_player_is_on_floor \
 	&& current_state != state.LADDER:
 		velocity.y -= gravity * _delta

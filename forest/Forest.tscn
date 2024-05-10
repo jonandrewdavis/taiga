@@ -1,15 +1,21 @@
-[gd_scene load_steps=11 format=3 uid="uid://blp8d4os7dl3w"]
+[gd_scene load_steps=21 format=3 uid="uid://blp8d4os7dl3w"]
 
 [ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
 [ext_resource type="Script" path="res://forest/Instancer.gd" id="2_41h2q"]
 [ext_resource type="Material" uid="uid://bensj7wrago0n" path="res://demo_level/world_materials/citybrick01.tres" id="3_u8b8b"]
-[ext_resource type="Material" uid="uid://bu351ebqnnb6x" path="res://demo_level/world_materials/crate01.tres" id="4_ddy55"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_cdrrn"]
-size = Vector2(200, 200)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_mwog6"]
-size = Vector3(100, 0.25, 100)
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="5_k6ry7"]
+[ext_resource type="Resource" path="res://assets/hmap/data.hterrain" id="6_sq2yc"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="7_brtfb"]
+[ext_resource type="Texture2D" uid="uid://b1ekle2kkatfm" path="res://assets/textures_hmap_env/Forest_slot0_albedo_bump.png" id="8_yujuw"]
+[ext_resource type="Texture2D" uid="uid://bhkyyhtg4yae4" path="res://assets/textures_hmap_env/Forest_slot1_albedo_bump.png" id="9_ht1dx"]
+[ext_resource type="Texture2D" uid="uid://meflj1mt6b84" path="res://assets/textures_hmap_env/Forest_slot2_albedo_bump.png" id="10_lsvvg"]
+[ext_resource type="Texture2D" uid="uid://crw0epps6g55s" path="res://assets/textures_hmap_env/Forest_slot3_albedo_bump.png" id="11_j3b6j"]
+[ext_resource type="Texture2D" uid="uid://u73rytb71vf4" path="res://assets/textures_hmap_env/Forest_slot0_normal_roughness.png" id="12_xlypv"]
+[ext_resource type="Texture2D" uid="uid://c8o6pbjqmnh16" path="res://assets/textures_hmap_env/Forest_slot1_normal_roughness.png" id="13_s7vij"]
+[ext_resource type="Texture2D" uid="uid://6sm6gy1rt786" path="res://assets/textures_hmap_env/Forest_slot2_normal_roughness.png" id="14_jpdh5"]
+[ext_resource type="Texture2D" uid="uid://dqwyndw86pf74" path="res://assets/textures_hmap_env/Forest_slot3_normal_roughness.png" id="15_3vfjw"]
+[ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_detail_layer.gd" id="16_dettw"]
+[ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="17_mo32o"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_2v4np"]
 
@@ -20,8 +26,10 @@ noise = SubResource("FastNoiseLite_2v4np")
 material = ExtResource("3_u8b8b")
 size = Vector3(2, 2, 2)
 
-[sub_resource type="BoxMesh" id="BoxMesh_8eieg"]
-material = ExtResource("4_ddy55")
+[sub_resource type="Resource" id="Resource_7u5g1"]
+script = ExtResource("7_brtfb")
+mode = 0
+textures = [[ExtResource("8_yujuw"), ExtResource("9_ht1dx"), ExtResource("10_lsvvg"), ExtResource("11_j3b6j")], [ExtResource("12_xlypv"), ExtResource("13_s7vij"), ExtResource("14_jpdh5"), ExtResource("15_3vfjw")]]
 
 [node name="Forest" type="Node3D"]
 
@@ -29,21 +37,18 @@ material = ExtResource("4_ddy55")
 environment = ExtResource("1_hyo65")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-light_angular_distance = 5.0
+light_color = Color(0.912104, 0.840649, 0.671484, 1)
+light_energy = 0.4
+light_angular_distance = 57.85
 shadow_enabled = true
 
-[node name="FloorTemp" type="MeshInstance3D" parent="."]
-mesh = SubResource("PlaneMesh_cdrrn")
-
-[node name="StaticBody3D" type="StaticBody3D" parent="FloorTemp"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="FloorTemp/StaticBody3D"]
-shape = SubResource("BoxShape3D_mwog6")
+[node name="PlayerSpawn" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 37.665, 0)
+gizmo_extents = 1.35
 
 [node name="TreeInstance" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.00728405, 0, 0)
 script = ExtResource("2_41h2q")
-ground_chunk_mesh = NodePath("../FloorTemp")
 pos_randomize = 30.0
 terrain_height = 4.0
 scale_randomize = 0.925
@@ -54,6 +59,34 @@ instance_mesh = SubResource("BoxMesh_5beyt")
 [node name="FakePlayer" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.398543, 0.109846, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.579477, 2.25857)
-mesh = SubResource("BoxMesh_8eieg")
+[node name="HTerrain" type="Node3D" parent="."]
+script = ExtResource("5_k6ry7")
+centered = true
+_terrain_data = ExtResource("6_sq2yc")
+chunk_size = 32
+collision_enabled = true
+collision_layer = 1
+collision_mask = 1
+shader_type = "Classic4"
+custom_shader = null
+custom_globalmap_shader = null
+texture_set = SubResource("Resource_7u5g1")
+render_layers = 1
+cast_shadow = 0
+shader_params/u_ground_uv_scale_per_texture = Vector4(20, 20, 20, 20)
+shader_params/u_depth_blending = true
+shader_params/u_triplanar = false
+shader_params/u_tile_reduction = Vector4(1, 1, 1, 1)
+shader_params/u_globalmap_blend_start = null
+shader_params/u_globalmap_blend_distance = null
+shader_params/u_colormap_opacity_per_texture = Vector4(1, 1, 1, 1)
+shader_params/u_specular = 0.5
+
+[node name="HTerrainDetailLayer" type="Node3D" parent="HTerrain"]
+script = ExtResource("16_dettw")
+shader_params/u_globalmap_tint_bottom = null
+shader_params/u_globalmap_tint_top = null
+shader_params/u_bottom_ao = null
+shader_params/u_instance_scale = Vector3(1, 1, 1)
+shader_params/u_roughness = 0.9
+metadata/_editor_icon = ExtResource("17_mo32o")
