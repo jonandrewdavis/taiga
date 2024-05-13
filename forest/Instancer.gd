@@ -77,7 +77,7 @@ func create_multimesh():
 	if Engine.is_editor_hint():
 		await heightmap.changed
 	print('got this far')
-	hmap_img = heightmap.get_image()
+	hmap_img = load('res://assets/hmap/hmap_test_export_1.exr').get_image()
 	width = hmap_img.get_width()
 	height = hmap_img.get_height()
 	
@@ -177,7 +177,7 @@ func get_heightmap_y(x, z):
 	if pixel_z < 0: pixel_z += height 
  
 	var color = hmap_img.get_pixel(pixel_x, pixel_z)
-	return color.r * terrain_height * v_scale
+	return color.r * terrain_height * 1
  
 func random(x,z):
 	var r = fposmod(sin(Vector2(x,z).dot(Vector2(12.9898,78.233)) * 43758.5453123),1.0)

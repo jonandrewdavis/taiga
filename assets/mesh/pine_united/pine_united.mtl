@@ -1,0 +1,23 @@
+# Blender 4.0.2 MTL File: 'pine_united.blend'
+# www.blender.org
+
+newmtl PineTree_Bark
+Ns 487.886383
+Ka 0.400000 0.400000 0.400000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 3
+map_Kd PineTree_Bark.png
+map_Bump -bm 1.000000 PineTree_Bark_Normal.png
+
+newmtl PineTree_Leaves
+Ns 487.886383
+Ka 0.400000 0.400000 0.400000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+illum 3
+map_Kd PineTree_Leaves.png
+map_d PineTree_Leaves.png
