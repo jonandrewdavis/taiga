@@ -59,6 +59,8 @@ func _ready():
 	
 func create_multimesh():
 	print('ready create multi', player_node.global_position)
+	
+	# NOTE DO NOT DO THIS FOR GENERATED TERRAIN!!!! h is shit. Z is necessary for MULTIPLIER
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized
 	#h_scale = 1 # could be x or z, doesn not matter as they should be the same
 	#v_scale = 1
@@ -81,15 +83,21 @@ func create_multimesh():
 		hmap_img = heightmap.get_image()
 	else:
 		# TODO: Get generated
-		#hmap_img = generated_terrain.generated_heightmap.get_image()
-		hmap_img = heightmap.get_image()
+		hmap_img = generated_terrain.generated_heightmap
+		#hmap_img = heightmap.get_image()
 		
 	if !hmap_img:
 		return
+		
+	# TODO: AD Changed from .get_node() REMOVED BECAUSE FUCK, 1 is fine.
+	#if !Engine.is_editor_hint():
+		#h_scale = generated_terrain.generated_scale # could be x or z, doesn not matter as they should be the same
+		#v_scale = generated_terrain.generated_scale
+
 
 	width = hmap_img.get_width()
 	height = hmap_img.get_height()
-	print(width, height)
+
 	
 	# Add the MultiMeshInstance3D as a child of the instancer
 	add_child(multi_mesh_instance)
@@ -138,6 +146,7 @@ func distribute_meshes():
 		z = pos.z 
 		
 		# Sample the heightmap texture to determine the Y position
+
 		var y = get_heightmap_y(x, z)
 
  
@@ -179,8 +188,10 @@ func distribute_meshes():
  
 func get_heightmap_y(x, z):
 	# Sample the heightmap texture to get the Y position based on X and Z coordinates
-	var pixel_x = (width / 2) + x / h_scale 
-	var pixel_z = (height / 2) + z / h_scale 
+	# AD: NOTE: SHOULD BE 1. generally... , then multiply the final result by the v_scale ... otherwise the z is MINISCULE 0.001
+	var i : float = 2.0
+	var pixel_x = (width / i) + x
+	var pixel_z = (height / i) + z
 	
 	if pixel_x > width: pixel_x -= width 
 	if pixel_z > height: pixel_z -= height 
@@ -188,8 +199,11 @@ func get_heightmap_y(x, z):
 	if pixel_z < 0: pixel_z += height 
  	
 	var color: Color = hmap_img.get_pixel(pixel_x, pixel_z)
-	return color.r * terrain_height * 1
- 
+	
+	# I HAVE TO ADJUST DOWN, I DUNNO WHY
+	# HERE IVE ADDED A CORRECTIVE FACTOR OF 0.9 and it JUST WORKS and - 1 on the terrain too.
+	return (color.r * (generated_terrain.generated_scale * 1)) - terrain_height
+  
 func random(x,z):
 	var r = fposmod(sin(Vector2(x,z).dot(Vector2(12.9898,78.233)) * 43758.5453123),1.0)
 	return r

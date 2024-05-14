@@ -1,11 +1,10 @@
-[gd_scene load_steps=30 format=3 uid="uid://blp8d4os7dl3w"]
+[gd_scene load_steps=24 format=3 uid="uid://blp8d4os7dl3w"]
 
 [ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
 [ext_resource type="Material" uid="uid://dgkvdjkhwq37j" path="res://assets/TaigaDirt1.tres" id="4_gnk2s"]
 [ext_resource type="Script" path="res://forest/Instancer.gd" id="6_j55yx"]
 [ext_resource type="Texture2D" uid="uid://ch0886jmw2pqc" path="res://assets/mesh/pine/PineTree_Bark.png" id="7_cwta5"]
 [ext_resource type="Texture2D" uid="uid://c2f1ee42tnj5l" path="res://assets/mesh/pine/PineTree_Leaves.png" id="8_ao5i0"]
-[ext_resource type="Terrain3DStorage" uid="uid://b44hx7uh6x76r" path="res://forest/Terrain3DData1.res" id="9_tjboa"]
 [ext_resource type="Script" path="res://forest/GeneratedTerrain3D.gd" id="12_ha2ji"]
 [ext_resource type="Script" path="res://forest/RunTimeBaker.gd" id="13_dxw4e"]
 [ext_resource type="Shader" uid="uid://cmyeclhrvhn2o" path="res://assets/shaders/foliage_shader_G4alpha10.tres" id="20_hv53j"]
@@ -63,11 +62,10 @@ shader_parameter/map_normalmap_size = Vector2(2000, 2000)
 shader_parameter/map_heightmap = SubResource("NoiseTexture2D_47fiv")
 shader_parameter/map_clumpmap = SubResource("NoiseTexture2D_kex6c")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_s318c"]
-fractal_type = 3
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_rw8k6"]
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tfpae"]
-noise = SubResource("FastNoiseLite_s318c")
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_x2c3t"]
+noise = SubResource("FastNoiseLite_rw8k6")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s5wpi"]
 resource_name = "PineTree_Bark"
@@ -111,45 +109,6 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="Gradient" id="Gradient_ih1xo"]
-offsets = PackedFloat32Array(0.2, 1)
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_y7b4a"]
-noise_type = 2
-frequency = 0.03
-cellular_jitter = 3.0
-cellular_return_type = 0
-domain_warp_enabled = true
-domain_warp_type = 1
-domain_warp_amplitude = 50.0
-domain_warp_fractal_type = 2
-domain_warp_fractal_lacunarity = 1.5
-domain_warp_fractal_gain = 1.0
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_708jy"]
-seamless = true
-color_ramp = SubResource("Gradient_ih1xo")
-noise = SubResource("FastNoiseLite_y7b4a")
-
-[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_5wcd7"]
-_shader_parameters = {
-"_mouse_layer": 2147483648,
-"blend_sharpness": null,
-"height_blending": null,
-"macro_variation1": null,
-"macro_variation2": null,
-"noise1_angle": null,
-"noise1_offset": null,
-"noise1_scale": null,
-"noise2_scale": null,
-"noise3_scale": null,
-"noise_texture": SubResource("NoiseTexture2D_708jy")
-}
-show_checkered = true
-
-[sub_resource type="Terrain3DTextureList" id="Terrain3DTextureList_0ptkc"]
-
 [node name="Forest" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -160,7 +119,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 37.665, 1.21531)
 gizmo_extents = 1.35
 
 [node name="FakePlayer" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.8488, 38.4839, 2.31085)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.8455, 21.9653, 2.31085)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
@@ -171,8 +130,9 @@ shape = SubResource("BoxShape3D_vhtxe")
 mesh = SubResource("BoxMesh_donn6")
 skeleton = NodePath("../..")
 
-[node name="Grass3D" type="GPUParticles3D" parent="." node_paths=PackedStringArray("player_node")]
+[node name="Grass3D" type="GPUParticles3D" parent="." node_paths=PackedStringArray("player_node", "generated_terrain")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.6147, 0, 0)
+visible = false
 amount = 20000
 lifetime = 0.1
 explosiveness = 1.0
@@ -182,22 +142,16 @@ process_material = SubResource("ShaderMaterial_k6d34")
 draw_pass_1 = ExtResource("21_crvvi")
 script = ExtResource("22_sumt6")
 player_node = NodePath("../FakePlayer")
+generated_terrain = NodePath("../GeneratedTerrain3D")
 
 [node name="PineTreeLarge" type="Marker3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 2)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
-ground_chunk_mesh = NodePath("../StaticBody3D/MeshInstance3D")
-heightmap = SubResource("NoiseTexture2D_tfpae")
+heightmap = SubResource("NoiseTexture2D_x2c3t")
 instance_mesh = SubResource("ArrayMesh_ag24e")
-
-[node name="Terrain3D" type="Terrain3D" parent="."]
-storage = ExtResource("9_tjboa")
-material = SubResource("Terrain3DMaterial_5wcd7")
-texture_list = SubResource("Terrain3DTextureList_0ptkc")
-debug_show_collision = true
-visible = false
+update_frequency = 1.0
 
 [node name="GeneratedTerrain3D" type="Node" parent="." node_paths=PackedStringArray("NavigationBakerRef")]
 script = ExtResource("12_ha2ji")

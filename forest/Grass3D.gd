@@ -1,6 +1,7 @@
 extends GPUParticles3D
 
 @export var player_node: Node3D
+@export var generated_terrain: Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -17,13 +18,19 @@ func _ready():
 			create_instance()
 		else:
 			await get_tree().create_timer(2.0).timeout
-			_ready()	
+			_ready()
 	pass # Replace with function body.
 
 var timer
 
 func create_instance():
 	print("CREATE GRASS CALLED")
+	
+	var get_new_map = ImageTexture.create_from_image(generated_terrain.generated_heightmap)
+	if !get_new_map:
+		return
+	process_material.set("shader_parameter/map_heightmap", get_new_map);
+
 	timer = Timer.new()
 	$"..".add_child(timer)
 	timer.timeout.connect(_update)

@@ -3,13 +3,14 @@ extends Node
 @export var NavigationBakerRef: Node
 
 # NOTE CHANGE:
-@export var generated_heightmap: Texture2D
+@export var generated_heightmap: Image
+@export var generated_scale: float
+@export var terrain: Terrain3D = Terrain3D.new()
 
 func _ready():
 	#$UI.player = $Player
 
 	# Create a terrain
-	var terrain := Terrain3D.new()
 	terrain.set_collision_enabled(false)
 	terrain.storage = Terrain3DStorage.new()
 	terrain.texture_list = Terrain3DTextureList.new()
@@ -29,7 +30,9 @@ func _ready():
 	terrain.storage.import_images([img, null, null], Vector3(-1024, 0, -1024), 0.0, 300.0)
 	
 	# AD CHANGE: Save off 
-	generated_heightmap = ImageTexture.create_from_image(img)
+	generated_heightmap = img
+	generated_scale = 300.0
+	
 
 	# Enable collision. Enable the first if you wish to see it with Debug/Visible Collision Shapes
 	#terrain.set_show_debug_collision(true)
