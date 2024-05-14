@@ -59,8 +59,8 @@ func _ready():
 func create_multimesh():
 	print('ready create multi', player_node.global_position)
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized
-	h_scale = get_node(ground_chunk_mesh).scale.x # could be x or z, doesn not matter as they should be the same
-	v_scale = get_node(ground_chunk_mesh).scale.y
+	h_scale = 1 # could be x or z, doesn not matter as they should be the same
+	v_scale = 1
 	
 	# Create a MultiMeshInstance3D and set its MultiMesh
 	multi_mesh_instance = MultiMeshInstance3D.new()
@@ -72,12 +72,11 @@ func create_multimesh():
 	instance_rows = sqrt(instance_amount) #rounded down to integer
 	offset = round(instance_amount/instance_rows) #rounded up/down to nearest integer
 
-	print('got z')
+
 	#wait for map to load before continuing
 	if Engine.is_editor_hint():
 		await heightmap.changed
-	print('got this far')
-	hmap_img = load('res://assets/hmap/hmap_test_export_1.exr').get_image()
+	hmap_img = heightmap.get_image()
 	width = hmap_img.get_width()
 	height = hmap_img.get_height()
 	
