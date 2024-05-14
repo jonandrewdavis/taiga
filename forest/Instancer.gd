@@ -47,6 +47,7 @@ func _ready():
 		create_multimesh()
 		return
 	else:
+		global_position = Vector3(0,0,0)
 		var players = get_tree().get_nodes_in_group("Player");
 		if players.size():
 			player_node = players[0]
@@ -58,7 +59,7 @@ func _ready():
 			_ready()	
 	
 func create_multimesh():
-	print('ready create multi', player_node.global_position)
+
 	
 	# NOTE DO NOT DO THIS FOR GENERATED TERRAIN!!!! h is shit. Z is necessary for MULTIPLIER
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized

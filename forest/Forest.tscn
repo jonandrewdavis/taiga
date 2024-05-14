@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://blp8d4os7dl3w"]
+[gd_scene load_steps=25 format=3 uid="uid://blp8d4os7dl3w"]
 
 [ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
 [ext_resource type="Material" uid="uid://dgkvdjkhwq37j" path="res://assets/TaigaDirt1.tres" id="4_gnk2s"]
@@ -32,9 +32,14 @@ fractal_weighted_strength = 0.16
 color_ramp = SubResource("Gradient_qrd1e")
 noise = SubResource("FastNoiseLite_kj38k")
 
+[sub_resource type="Gradient" id="Gradient_2fgfd"]
+offsets = PackedFloat32Array(0, 0.289286, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.0642857, 0.0642857, 0.0642857, 1, 1, 1, 1, 1)
+
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_2oc0i"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_47fiv"]
+color_ramp = SubResource("Gradient_2fgfd")
 noise = SubResource("FastNoiseLite_2oc0i")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k6d34"]

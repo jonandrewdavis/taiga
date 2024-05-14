@@ -30,7 +30,8 @@ func create_instance():
 	if !get_new_map:
 		return
 	process_material.set("shader_parameter/map_heightmap", get_new_map);
-
+	
+	
 	timer = Timer.new()
 	$"..".add_child(timer)
 	timer.timeout.connect(_update)
