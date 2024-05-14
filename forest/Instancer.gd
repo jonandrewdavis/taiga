@@ -1,6 +1,7 @@
 @tool
 extends Node3D
- 
+
+@export var generated_terrain: Node
 @export var player_node: Node3D
 @export var instance_amount : int = 100  # Number of instances to generate
 @export var generate_colliders: bool = false
@@ -59,8 +60,8 @@ func _ready():
 func create_multimesh():
 	print('ready create multi', player_node.global_position)
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized
-	h_scale = 1 # could be x or z, doesn not matter as they should be the same
-	v_scale = 1
+	#h_scale = 1 # could be x or z, doesn not matter as they should be the same
+	#v_scale = 1
 	
 	# Create a MultiMeshInstance3D and set its MultiMesh
 	multi_mesh_instance = MultiMeshInstance3D.new()
@@ -74,11 +75,21 @@ func create_multimesh():
 
 
 	#wait for map to load before continuing
+	# AD: Changes to this logic in terms of where it gets it
 	if Engine.is_editor_hint():
 		await heightmap.changed
-	hmap_img = heightmap.get_image()
+		hmap_img = heightmap.get_image()
+	else:
+		# TODO: Get generated
+		#hmap_img = generated_terrain.generated_heightmap.get_image()
+		hmap_img = heightmap.get_image()
+		
+	if !hmap_img:
+		return
+
 	width = hmap_img.get_width()
 	height = hmap_img.get_height()
+	print(width, height)
 	
 	# Add the MultiMeshInstance3D as a child of the instancer
 	add_child(multi_mesh_instance)
@@ -128,6 +139,7 @@ func distribute_meshes():
 		
 		# Sample the heightmap texture to determine the Y position
 		var y = get_heightmap_y(x, z)
+
  
 		var ori = Vector3(x, y, z)
 		var sc = Vector3(   instance_min_scale+scale_randomize * random(x,z) + instance_width,
@@ -174,8 +186,8 @@ func get_heightmap_y(x, z):
 	if pixel_z > height: pixel_z -= height 
 	if pixel_x < 0: pixel_x += width 
 	if pixel_z < 0: pixel_z += height 
- 
-	var color = hmap_img.get_pixel(pixel_x, pixel_z)
+ 	
+	var color: Color = hmap_img.get_pixel(pixel_x, pixel_z)
 	return color.r * terrain_height * 1
  
 func random(x,z):
