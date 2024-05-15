@@ -30,8 +30,8 @@ uniform sampler2D map_clumpmap;
 
 float get_height(vec2 pos) {
 	pos -= 0.5 * map_heightmap_size;
-	pos /= map_heightmap_size;	
-	return 2.0*__terrain_amplitude * texture(map_heightmap, pos).r * 300.0;
+	pos /= map_heightmap_size;
+	return 2.0*__terrain_amplitude * texture(map_heightmap, pos).r * 150.0;
 }
 
 vec3 unpack_normalmap(vec3 rgb) {
@@ -135,5 +135,4 @@ void start() {
 	TRANSFORM[0][0]  = base_scale.x;
 	TRANSFORM[1][1] =  base_scale.y;
 	TRANSFORM[2][2]  = base_scale.z;
-
 }	"

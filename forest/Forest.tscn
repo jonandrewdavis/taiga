@@ -45,25 +45,25 @@ noise = SubResource("FastNoiseLite_2oc0i")
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k6d34"]
 shader = ExtResource("20_hv53j")
 shader_parameter/instance_rows = 150.0
-shader_parameter/instance_rot_randomize = 2.5
+shader_parameter/instance_rot_randomize = 20.0
 shader_parameter/instance_spacing = 0.8
 shader_parameter/instance_scale_x = 1.0
 shader_parameter/instance_scale_y = 1.0
 shader_parameter/instance_scale_z = 1.0
-shader_parameter/instance_scale_randomize = 1.0
+shader_parameter/instance_scale_randomize = 2.8
 shader_parameter/instance_pos_randomize = 2.0
 shader_parameter/instance_scale_min = 0.8
-shader_parameter/instance_scale_max = 2.0
+shader_parameter/instance_scale_max = 1.1
 shader_parameter/_coverage_altitude = 10.0
 shader_parameter/_coverage_range = 100.0
 shader_parameter/_slope_coverage = 0.5
-shader_parameter/clumping_strength = 20.0
+shader_parameter/clumping_strength = 25.0
 shader_parameter/terrain_normal_basis = null
 shader_parameter/instance_orient_to_normal = false
 shader_parameter/instance_orientation_influence = 1.0
-shader_parameter/__terrain_amplitude = 0.0
-shader_parameter/map_heightmap_size = Vector2(2000, 2000)
-shader_parameter/map_normalmap_size = Vector2(2000, 2000)
+shader_parameter/__terrain_amplitude = 1.0
+shader_parameter/map_heightmap_size = Vector2(2048, 2048)
+shader_parameter/map_normalmap_size = Vector2(2048, 2048)
 shader_parameter/map_heightmap = SubResource("NoiseTexture2D_47fiv")
 shader_parameter/map_clumpmap = SubResource("NoiseTexture2D_kex6c")
 
@@ -120,11 +120,10 @@ blend_shape_mode = 0
 environment = ExtResource("1_hyo65")
 
 [node name="PlayerSpawn" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 37.665, 1.21531)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.28924, 37.665, 1.21531)
 gizmo_extents = 1.35
 
 [node name="FakePlayer" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.8455, 21.9653, 2.31085)
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
@@ -136,8 +135,7 @@ mesh = SubResource("BoxMesh_donn6")
 skeleton = NodePath("../..")
 
 [node name="Grass3D" type="GPUParticles3D" parent="." node_paths=PackedStringArray("player_node", "generated_terrain")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.6147, 0, 0)
-visible = false
+extra_cull_margin = 10.0
 amount = 20000
 lifetime = 0.1
 explosiveness = 1.0
@@ -150,13 +148,14 @@ player_node = NodePath("../FakePlayer")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 
 [node name="PineTreeLarge" type="Marker3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 2)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
+pos_randomize = 8.0
+instance_spacing = 11
 heightmap = SubResource("NoiseTexture2D_x2c3t")
 instance_mesh = SubResource("ArrayMesh_ag24e")
-update_frequency = 1.0
+update_frequency = 0.2
 
 [node name="GeneratedTerrain3D" type="Node" parent="." node_paths=PackedStringArray("NavigationBakerRef")]
 script = ExtResource("12_ha2ji")
