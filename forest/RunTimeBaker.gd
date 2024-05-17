@@ -23,13 +23,7 @@ var _bake_task_timer: float = 0.0
 var _bake_cooldown_timer: float = 0.0
 var _nav_region: NavigationRegion3D
 
-
 func _ready():
-	await get_tree().create_timer(3.0).timeout
-	
-	if !terrain:
-		return
-	
 	_nav_region = NavigationRegion3D.new()
 	_nav_region.navigation_layers = navigation_layers
 	_nav_region.enabled = enabled
@@ -52,7 +46,7 @@ func _ready():
 
 
 func set_enabled(p_value: bool) -> void:
-	enabled = p_value
+	enabled = p_value	
 	if _nav_region:
 		_nav_region.enabled = enabled
 	set_process(enabled and template)

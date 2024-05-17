@@ -1,7 +1,5 @@
 extends Node
 
-@export var NavigationBakerRef: Node
-
 # NOTE CHANGE:
 @export var generated_heightmap: Image
 @export var generated_scale: float
@@ -39,10 +37,15 @@ func _ready():
 	terrain.set_collision_enabled(true)
 	
 	# Enable runtime navigation baking using the terrain
-	NavigationBakerRef.terrain = terrain
-	NavigationBakerRef.enabled = true
-	
-	
+	await get_tree().create_timer(2.0).timeout
+
+	print('BAKE TIME')
+
+	# Enable runtime navigation baking using the terrain
+	# TEST
+	$NavigationBaker.terrain = terrain
+	$NavigationBaker.enabled = true
+		
 	# Retreive 512x512 region blur map showing where the regions are
 	var rbmap_rid: RID = terrain.material.get_region_blend_map()
 	img = RenderingServer.texture_2d_get(rbmap_rid)
