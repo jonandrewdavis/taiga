@@ -1,0 +1,11 @@
+[gd_resource type="Terrain3DTextureList" load_steps=4 format=3 uid="uid://dx05qg6xcs10p"]
+
+[ext_resource type="Texture2D" uid="uid://b5jxy0yfhf0oa" path="res://assets/textures_env/ground_37_packed_png.png" id="1_d473h"]
+[ext_resource type="Texture2D" uid="uid://dsjo8k38wbo5m" path="res://assets/textures_env/packed_normal_roughness.png" id="2_hka7f"]
+
+[sub_resource type="Terrain3DTexture" id="Terrain3DTexture_tcyer"]
+albedo_texture = ExtResource("1_d473h")
+normal_texture = ExtResource("2_hka7f")
+
+[resource]
+textures = Array[Terrain3DTexture]([SubResource("Terrain3DTexture_tcyer")])

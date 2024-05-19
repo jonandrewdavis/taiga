@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://edkg1mp7wtq6"]
+
+[ext_resource type="Texture2D" uid="uid://ch0886jmw2pqc" path="res://assets/mesh/pine/PineTree_Bark.png" id="1_lo8mb"]
+
+[resource]
+resource_name = "PineTree_Bark"
+albedo_texture = ExtResource("1_lo8mb")
+metallic = 0.5

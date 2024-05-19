@@ -1,0 +1,15 @@
+[gd_resource type="StandardMaterial3D" load_steps=3 format=3 uid="uid://bbecix6daksw6"]
+
+[ext_resource type="Texture2D" uid="uid://clb33ttx8gfot" path="res://assets/env/fern/fern/untitled_Image_0.png" id="1_htkiw"]
+[ext_resource type="Material" uid="uid://dmyxh047nbg1v" path="res://assets/env/fern/fern_shader_material_1.tres" id="2_6wyds"]
+
+[resource]
+resource_name = "Material.001"
+next_pass = ExtResource("2_6wyds")
+transparency = 2
+alpha_scissor_threshold = 1.0
+alpha_antialiasing_mode = 0
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_htkiw")
+roughness = 0.6

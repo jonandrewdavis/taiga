@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://802fwsc6spav"]
+
+[ext_resource type="Texture2D" uid="uid://rk163tofidc4" path="res://assets/env/grass1/grass1_green_gradient.tres" id="1_anp8g"]
+
+[resource]
+resource_name = "Grass"
+albedo_texture = ExtResource("1_anp8g")
+metallic = 0.5

@@ -5,6 +5,10 @@ extends Node
 @export var generated_scale: float
 @export var terrain: Terrain3D = Terrain3D.new()
 
+# AD, ADDED AFTER EXAMPLE:
+@export var PanelMaterial1 = Terrain3DMaterial
+@export var PanelTextureList1 = Terrain3DTextureList
+
 func _ready():
 	#$UI.player = $Player
 
@@ -15,8 +19,9 @@ func _ready():
 	terrain.name = "GeneratedTerrain3D"
 	add_child(terrain, true)
 	
-	# TODO: Add
+	# TODO: ADDED WITH LINKS EXPORTED FROM ABOVE
 	terrain.material.world_background = Terrain3DMaterial.NONE
+	terrain.texture_list = PanelTextureList1
 	
 	# Generate 32-bit noise and import it with scale
 	var noise := FastNoiseLite.new()

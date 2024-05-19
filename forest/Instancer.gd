@@ -42,6 +42,9 @@ var v_scale: float = 1
 @onready var last_pos: Vector3
 @onready var first_update= true
  
+# TODO: disable player & heightmap? or just like fill them by default? we will always programmatically
+# do it since this is a GENERATED terrain script.
+
 func _ready():
 	if Engine.is_editor_hint():
 		create_multimesh()

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://0bt3xvrpe6rk"]
+
+[ext_resource type="PackedScene" uid="uid://dwem7tp17up8h" path="res://assets/characters/Pro Sword and Shield Pack/Paladin J Nordstrom.fbx" id="1_2b7ry"]
+
+[node name="Root Scene" instance=ExtResource("1_2b7ry")]

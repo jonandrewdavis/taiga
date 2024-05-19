@@ -1,0 +1,23 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://dmyxh047nbg1v"]
+
+[ext_resource type="Texture2D" uid="uid://clb33ttx8gfot" path="res://assets/env/fern/fern/untitled_Image_0.png" id="1_6qy5v"]
+[ext_resource type="Shader" path="res://assets/env/SwayShaderExtended.gdshader" id="1_psh7n"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_psh7n")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/alpha_scissor_threshold = 0.5
+shader_parameter/point_size = 45.43
+shader_parameter/roughness = 1.0
+shader_parameter/metallic_texture_channel = null
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/uv1_scale = Vector3(1, 1, 1)
+shader_parameter/uv1_offset = Vector3(0, 0, 0)
+shader_parameter/uv2_scale = Vector3(1, 1, 1)
+shader_parameter/uv2_offset = Vector3(0, 0, 0)
+shader_parameter/sway_speed = 1.0
+shader_parameter/sway_strength = 0.01
+shader_parameter/sway_phase_len = 8.0
+shader_parameter/texture_albedo = ExtResource("1_6qy5v")
