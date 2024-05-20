@@ -19,6 +19,11 @@
 [ext_resource type="Shader" uid="uid://cmyeclhrvhn2o" path="res://assets/shaders/foliage_shader_G4alpha10.tres" id="20_hv53j"]
 [ext_resource type="Script" path="res://forest/Grass3D.gd" id="22_sumt6"]
 
+[sub_resource type="NavigationMesh" id="NavigationMesh_o2y6c"]
+geometry_parsed_geometry_type = 1
+agent_height = 2.0
+agent_max_slope = 30.0
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_vhtxe"]
 size = Vector3(200, 1, 200)
 
@@ -52,6 +57,8 @@ colors = PackedColorArray(0, 0, 0, 1, 0.0642857, 0.0642857, 0.0642857, 1, 1, 1, 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_2oc0i"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_47fiv"]
+width = 2048
+height = 2048
 color_ramp = SubResource("Gradient_2fgfd")
 noise = SubResource("FastNoiseLite_2oc0i")
 
@@ -133,11 +140,6 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 
-[sub_resource type="NavigationMesh" id="NavigationMesh_o2y6c"]
-geometry_parsed_geometry_type = 1
-agent_height = 2.0
-agent_max_slope = 30.0
-
 [sub_resource type="Gradient" id="Gradient_ixdrs"]
 offsets = PackedFloat32Array(0.2, 1)
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
@@ -184,6 +186,27 @@ noise = SubResource("FastNoiseLite_skcdw")
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("1_hyo65")
 
+[node name="GeneratedTerrain3D" type="Node" parent="."]
+script = ExtResource("12_ha2ji")
+PanelMaterial1 = ExtResource("11_3rtdd")
+PanelTextureList1 = ExtResource("14_crbni")
+
+[node name="NavigationBaker" type="Node" parent="GeneratedTerrain3D" node_paths=PackedStringArray("player")]
+script = ExtResource("13_dxw4e")
+enabled = false
+template = SubResource("NavigationMesh_o2y6c")
+player = NodePath("../../FakePlayer")
+bake_cooldown = 2.0
+
+[node name="FlatGrass" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="FlatGrass"]
+shape = SubResource("BoxShape3D_vhtxe")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="FlatGrass"]
+mesh = SubResource("BoxMesh_donn6")
+skeleton = NodePath("../..")
+
 [node name="PlayerSpawn" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.28924, 37.665, 1.21531)
 gizmo_extents = 1.35
@@ -191,16 +214,8 @@ gizmo_extents = 1.35
 [node name="FakePlayer" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.76147, 0, -0.314377)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-shape = SubResource("BoxShape3D_vhtxe")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
-mesh = SubResource("BoxMesh_donn6")
-skeleton = NodePath("../..")
-
 [node name="Fern" type="Node3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
@@ -233,6 +248,7 @@ player_node = NodePath("../FakePlayer")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 
 [node name="PineTreeLarge" type="Marker3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
@@ -244,18 +260,6 @@ heightmap = SubResource("NoiseTexture2D_x2c3t")
 instance_mesh = SubResource("ArrayMesh_ag24e")
 update_frequency = 0.2
 
-[node name="GeneratedTerrain3D" type="Node" parent="."]
-script = ExtResource("12_ha2ji")
-PanelMaterial1 = ExtResource("11_3rtdd")
-PanelTextureList1 = ExtResource("14_crbni")
-
-[node name="NavigationBaker" type="Node" parent="GeneratedTerrain3D" node_paths=PackedStringArray("player")]
-script = ExtResource("13_dxw4e")
-enabled = false
-template = SubResource("NavigationMesh_o2y6c")
-player = NodePath("../../FakePlayer")
-bake_cooldown = 2.0
-
 [node name="TESTTERRAIN3D" type="Terrain3D" parent="."]
 storage = ExtResource("13_4hqxx")
 material = SubResource("Terrain3DMaterial_by6c2")
@@ -263,6 +267,7 @@ texture_list = ExtResource("14_crbni")
 visible = false
 
 [node name="Rock 1 Mesh" type="Marker3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")

@@ -198,3 +198,7 @@ exit={
 3d_physics/layer_3="Targets"
 3d_physics/layer_4="Interactable"
 3d_physics/layer_5="Ladder"
+
+[physics]
+
+3d/physics_engine="JoltPhysics3D"

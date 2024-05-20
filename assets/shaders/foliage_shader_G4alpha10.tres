@@ -24,8 +24,8 @@ uniform sampler2D map_normalmap;
 uniform bool instance_orient_to_normal = false;
 uniform float instance_orientation_influence : hint_range(0.0, 10.0) = 1.0;
 uniform float __terrain_amplitude;
-uniform vec2 map_heightmap_size = vec2(2000.0, 2000.0);
-uniform vec2 map_normalmap_size = vec2(2000.0, 2000.0);
+uniform vec2 map_heightmap_size = vec2(2048.0, 2048.0);
+uniform vec2 map_normalmap_size = vec2(2048.0, 2048.0);
 uniform sampler2D map_clumpmap;
 
 float get_height(vec2 pos) {

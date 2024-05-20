@@ -14,7 +14,6 @@ signal ready_bake
 
 func _ready():
 	#$UI.player = $Player
-
 	# Create a terrain
 	terrain.set_collision_enabled(false)
 	terrain.storage = Terrain3DStorage.new()

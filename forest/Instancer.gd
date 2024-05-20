@@ -62,7 +62,6 @@ func _ready():
 			_ready()	
 	
 func create_multimesh():
-
 	
 	# NOTE DO NOT DO THIS FOR GENERATED TERRAIN!!!! h is shit. Z is necessary for MULTIPLIER
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized
@@ -76,8 +75,16 @@ func create_multimesh():
 	multi_mesh.transform_format = MultiMesh.TRANSFORM_3D
 	multi_mesh.instance_count = instance_amount
 	multi_mesh.mesh = instance_mesh 
-	instance_rows = sqrt(instance_amount) #rounded down to integer
-	offset = round(instance_amount/instance_rows) #rounded up/down to nearest integer
+
+	# NOTE: Added ignore warnings. These help organize the rows and do snapping - AD
+	
+	#rounded down to integer
+	@warning_ignore("narrowing_conversion")
+	instance_rows = sqrt(instance_amount)
+	
+	#rounded up/down to nearest integer
+	@warning_ignore("integer_division")
+	offset = round(instance_amount/instance_rows)
 
 
 	#wait for map to load before continuing
@@ -114,7 +121,7 @@ func create_multimesh():
 	_update()
  
 func _update():
-	#on each update, move the center to player
+	#on each update, move the center to player		
 	self.global_position = Vector3(player_node.global_position.x,0.0,player_node.global_position.z).snapped(Vector3(1,0,1));
 	multi_mesh_instance.multimesh = distribute_meshes()
 	timer.wait_time = update_frequency
@@ -204,8 +211,8 @@ func get_heightmap_y(x, z):
  	
 	var color: Color = hmap_img.get_pixel(pixel_x, pixel_z)
 	
-	# I HAVE TO ADJUST DOWN, I DUNNO WHY
-	# HERE IVE ADDED A CORRECTIVE FACTOR OF 0.9 and it JUST WORKS and - 1 on the terrain too.
+	# NOTE: The secret key here was the scaling factor (* 300.0) for generated terrain
+	# TODO: Rename terrain_height to terrain_height (negative), cause I'm using to subtract
 	return (color.r * (generated_terrain.generated_scale * 1)) - terrain_height
   
 func random(x,z):
@@ -216,7 +223,8 @@ func spawn_colliders():
 	collision_parent = StaticBody3D.new()
 	add_child(collision_parent)
 	collision_parent.set_as_top_level(true)
-	var c_shape = instance_collision
+	# TODO: Removed to prevent warning. Is this necessary?
+	# var c_shape = instance_collision
 	
 	for i in range(instance_amount):
 		if colliders_to_spawn.has(i):
