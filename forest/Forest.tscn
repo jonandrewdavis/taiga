@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://blp8d4os7dl3w"]
+[gd_scene load_steps=41 format=3 uid="uid://blp8d4os7dl3w"]
 
 [ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
 [ext_resource type="Material" uid="uid://dgkvdjkhwq37j" path="res://assets/TaigaDirt1.tres" id="4_gnk2s"]
@@ -15,6 +15,7 @@
 [ext_resource type="ArrayMesh" uid="uid://03nq8vhclx3k" path="res://assets/env/rock1/rock_1_mesh.res" id="16_3o2pt"]
 [ext_resource type="Shape3D" uid="uid://da5oc8du83jug" path="res://assets/env/rock1/rock1_collision_shape.tres" id="17_hb86v"]
 [ext_resource type="ArrayMesh" uid="uid://b7tt76x3kyyjw" path="res://assets/env/fern/fern_mesh_1.tres" id="17_twwk4"]
+[ext_resource type="Script" path="res://forest/EnemySpawnerTest.gd" id="18_ur6hj"]
 [ext_resource type="Shader" uid="uid://cmyeclhrvhn2o" path="res://assets/shaders/foliage_shader_G4alpha10.tres" id="20_hv53j"]
 [ext_resource type="Script" path="res://forest/Grass3D.gd" id="22_sumt6"]
 
@@ -68,12 +69,12 @@ shader_parameter/instance_scale_min = 0.8
 shader_parameter/instance_scale_max = 1.1
 shader_parameter/_coverage_altitude = 10.0
 shader_parameter/_coverage_range = 100.0
-shader_parameter/_slope_coverage = 0.5
+shader_parameter/_slope_coverage = 0.28
 shader_parameter/clumping_strength = 25.0
-shader_parameter/terrain_normal_basis = null
-shader_parameter/instance_orient_to_normal = false
+shader_parameter/terrain_normal_basis = Basis(1, 1, 1, 1, 1, 1, 1, 1, 1)
+shader_parameter/instance_orient_to_normal = true
 shader_parameter/instance_orientation_influence = 1.0
-shader_parameter/__terrain_amplitude = 1.0
+shader_parameter/__terrain_amplitude = 0.975
 shader_parameter/map_heightmap_size = Vector2(2048, 2048)
 shader_parameter/map_normalmap_size = Vector2(2048, 2048)
 shader_parameter/map_heightmap = SubResource("NoiseTexture2D_47fiv")
@@ -99,9 +100,9 @@ shader_parameter/uv1_scale = Vector3(1, 1, 1)
 shader_parameter/uv1_offset = Vector3(0, 0, 0)
 shader_parameter/uv2_scale = Vector3(1, 1, 1)
 shader_parameter/uv2_offset = Vector3(0, 0, 0)
-shader_parameter/sway_speed = 0.8
+shader_parameter/sway_speed = 0.6
 shader_parameter/sway_strength = 0.04
-shader_parameter/sway_phase_len = 1.5
+shader_parameter/sway_phase_len = 4.0
 shader_parameter/texture_albedo = ExtResource("8_ao5i0")
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ag24e"]
@@ -200,7 +201,6 @@ mesh = SubResource("BoxMesh_donn6")
 skeleton = NodePath("../..")
 
 [node name="Fern" type="Node3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
@@ -233,7 +233,6 @@ player_node = NodePath("../FakePlayer")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 
 [node name="PineTreeLarge" type="Marker3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
@@ -264,7 +263,6 @@ texture_list = ExtResource("14_crbni")
 visible = false
 
 [node name="Rock 1 Mesh" type="Marker3D" parent="." node_paths=PackedStringArray("generated_terrain", "player_node")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 script = ExtResource("6_j55yx")
 generated_terrain = NodePath("../GeneratedTerrain3D")
 player_node = NodePath("../FakePlayer")
@@ -280,3 +278,9 @@ heightmap = SubResource("NoiseTexture2D_8wdkv")
 instance_mesh = ExtResource("16_3o2pt")
 instance_collision = ExtResource("17_hb86v")
 update_frequency = 0.2
+
+[node name="EnemySpawnerTest" type="Node3D" parent="."]
+script = ExtResource("18_ur6hj")
+
+[connection signal="ready_bake" from="GeneratedTerrain3D" to="GeneratedTerrain3D/NavigationBaker" method="_on_generated_terrain_3d_ready_bake"]
+[connection signal="bake_finished" from="GeneratedTerrain3D/NavigationBaker" to="EnemySpawnerTest" method="_on_navigation_baker_bake_finished"]

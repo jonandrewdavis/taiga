@@ -23,7 +23,10 @@ var _bake_task_timer: float = 0.0
 var _bake_cooldown_timer: float = 0.0
 var _nav_region: NavigationRegion3D
 
-func _ready():
+func _on_generated_terrain_3d_ready_bake():
+	prepare_navigation_bake()
+
+func prepare_navigation_bake():
 	_nav_region = NavigationRegion3D.new()
 	_nav_region.navigation_layers = navigation_layers
 	_nav_region.enabled = enabled
@@ -39,6 +42,7 @@ func _ready():
 	
 	_update_map_cell_size()
 	
+	enabled = true
 	# If you're using ProtonScatter, you will want to delay this next call until after all
 	# your scatter nodes have finished setting up. Here, we just defer one frame so that nodes
 	# after this one in the tree get set up first
@@ -46,7 +50,7 @@ func _ready():
 
 
 func set_enabled(p_value: bool) -> void:
-	enabled = p_value	
+	enabled = p_value
 	if _nav_region:
 		_nav_region.enabled = enabled
 	set_process(enabled and template)
@@ -87,8 +91,10 @@ func _update_map_cell_size() -> void:
 		NavigationServer3D.map_set_cell_size(map, template.cell_size)
 		NavigationServer3D.map_set_cell_height(map, template.cell_height)
 
-
 func _process(p_delta: float) -> void:
+	if enabled == false:
+		return
+	
 	if _bake_task_id != -1:
 		_bake_task_timer += p_delta
 	

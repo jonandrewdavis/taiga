@@ -9,6 +9,9 @@ extends Node
 @export var PanelMaterial1 = Terrain3DMaterial
 @export var PanelTextureList1 = Terrain3DTextureList
 
+
+signal ready_bake
+
 func _ready():
 	#$UI.player = $Player
 
@@ -42,14 +45,8 @@ func _ready():
 	terrain.set_collision_enabled(true)
 	
 	# Enable runtime navigation baking using the terrain
-	await get_tree().create_timer(2.0).timeout
-
-	print('BAKE TIME')
-
-	# Enable runtime navigation baking using the terrain
-	# TEST
-	$NavigationBaker.terrain = terrain
-	$NavigationBaker.enabled = true
+	$NavigationBaker.terrain = terrain	
+	ready_bake.emit()	
 		
 	# Retreive 512x512 region blur map showing where the regions are
 	var rbmap_rid: RID = terrain.material.get_region_blend_map()

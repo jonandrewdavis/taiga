@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cnpswphglxbm7"]
+[gd_scene load_steps=3 format=3 uid="uid://cnpswphglxbm7"]
 
 [ext_resource type="Script" path="res://MainMenu.gd" id="1_r7uv3"]
+[ext_resource type="Theme" uid="uid://c2milug2rivfh" path="res://ui/theme/MinimalUI.tres" id="1_uxrkp"]
 
 [node name="Main" type="Node"]
 
@@ -23,8 +24,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_uxrkp")
 script = ExtResource("1_r7uv3")
 world_ref = NodePath("../../MainWorld")
+
+[node name="Panel" type="Panel" parent="MainMenu/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_uxrkp")
 
 [node name="MarginContainer" type="MarginContainer" parent="MainMenu/Control"]
 custom_minimum_size = Vector2(400, 0)
@@ -40,6 +51,7 @@ offset_right = 200.0
 offset_bottom = 148.5
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_uxrkp")
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
@@ -47,7 +59,14 @@ theme_override_constants/margin_bottom = 12
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Control/MarginContainer"]
 layout_mode = 2
+theme = ExtResource("1_uxrkp")
 theme_override_constants/separation = 12
+
+[node name="Taiga" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 140
+text = "Taiga"
+horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -63,9 +82,11 @@ text = "IP"
 
 [node name="IP" type="LineEdit" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("1_uxrkp")
 
 [node name="Host" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("1_uxrkp")
 text = "Host"
 
 [node name="Join" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
