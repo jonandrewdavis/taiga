@@ -62,7 +62,7 @@ func _process(_delta):
 			mesh_update()
 
 func mesh_update():
-	if mesh_array.size() != 0:
+	if mesh_array.size() > 2:
 		var surface_tool = SurfaceTool.new()
 		surface_tool.begin(Mesh.PRIMITIVE_TRIANGLE_STRIP)
 		surface_tool.set_material(custom_material)
@@ -73,7 +73,10 @@ func mesh_update():
 			surface_tool.set_uv(Vector2.RIGHT)
 			surface_tool.add_vertex(each_edge.bottom_p)
 		mesh = surface_tool.commit()
-	
+	else: 
+		var surface_tool = SurfaceTool.new()
+		mesh = surface_tool.commit()
+		
 func create_edge():
 	var new_top = origin_node.to_global(streak_top)
 	var new_bottom = origin_node.to_global(streak_bottom)

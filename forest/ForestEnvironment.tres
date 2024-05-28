@@ -8,6 +8,7 @@ background_energy_multiplier = 0.8
 sky = ExtResource("1_g35g6")
 tonemap_mode = 3
 sdfgi_read_sky_light = false
+volumetric_fog_enabled = true
 volumetric_fog_density = 0.08
 volumetric_fog_albedo = Color(0.601817, 0.681523, 0.780505, 1)
 volumetric_fog_anisotropy = 0.32

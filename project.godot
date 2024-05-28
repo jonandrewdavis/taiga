@@ -13,11 +13,16 @@ config_version=5
 config/name="Taiga"
 run/main_scene="res://MainMenu.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-config/icon="res://icon.png"
+config/icon="res://taiga.png"
 
 [audio]
 
 buses/default_bus_layout="res://audio/default_bus_layout.tres"
+buses/channel_disable_threshold_db=300.0
+
+[autoload]
+
+GlobalState="*res://global_state.gd"
 
 [debug]
 
@@ -30,7 +35,7 @@ window/size/viewport_height=1080
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg")
+enabled=PackedStringArray("res://addons/terrain_3d/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg")
 
 [input]
 

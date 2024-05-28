@@ -27,17 +27,24 @@ func _ready():
 	
 	# Generate 32-bit noise and import it with scale
 	var noise := FastNoiseLite.new()
-	noise.frequency = 0.0005
+
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH	
+	noise.seed = randi()
+	noise.frequency = 0.0008
+
+	#noise.frequency = 0.0005
 	var img: Image = Image.create(2048, 2048, false, Image.FORMAT_RF)
 	for x in 2048:
 		for y in 2048:
 			img.set_pixel(x, y, Color(noise.get_noise_2d(x, y)*0.5, 0., 0., 1.))
+			
+	# TODO: Variable for scale and also save size into GlobalState... un-hardcode in gen code
 	terrain.storage.import_images([img, null, null], Vector3(-1024, 0, -1024), 0.0, 300.0)
 	
 	# AD CHANGE: Save off 
-	generated_heightmap = img
-	generated_scale = 300.0
-	
+	GlobalState.current_heightmap = img
+	GlobalState.current_terrain = terrain
+	GlobalState.current_terrain_scale = 300.0
 
 	# Enable collision. Enable the first if you wish to see it with Debug/Visible Collision Shapes
 	#terrain.set_show_debug_collision(true)
@@ -49,7 +56,8 @@ func _ready():
 		
 	# Retreive 512x512 region blur map showing where the regions are
 	var rbmap_rid: RID = terrain.material.get_region_blend_map()
-	img = RenderingServer.texture_2d_get(rbmap_rid)
+	var terrain_render = RenderingServer.texture_2d_get(rbmap_rid)
+	GlobalState.current_terrain_render = terrain_render
 	#$UI/TextureRect.texture = ImageTexture.create_from_image(img)
 
 		

@@ -1,21 +1,24 @@
 extends Control
 
 const PORT = 9999
-var upnp_on = false
-var quick_quit_enabled = true
 
 @export var world_ref: Node3D
+@export var quick_quit_enabled = true
+@export var upnp_on = false
 
-# TODO: Better entry point
+#var path_to_level = preload("res://forest/Forest.tscn")
+var path_to_level = preload("res://demo_level/world_basic.tscn")
+var path_to_character_body = preload("res://player/character_body_souls_base.tscn")
 
+# TODO: Should probably have the controls as % access as unique name so they can be re-parented
 @onready var ip_ref = $MarginContainer/VBoxContainer/IP
 @onready var nickname = $MarginContainer/VBoxContainer/Nickname
-#@onready var color_button = $Panel/MarginContainer/VBoxContainer/ColorPickerButton
 @onready var error_ref = $MarginContainer/VBoxContainer/Error
 
 func _ready():
 	prepare_server_or_client()
-	#prepare_color_picker()
+	# TODO: 
+	# prepare_color_picker()
 	multiplayer.connection_failed.connect(_on_connected_fail)
 	multiplayer.server_disconnected.connect(_on_connected_fail)
 	
@@ -68,15 +71,16 @@ func _on_connected_fail():
 	get_tree().quit()
 
 func start_game_host():
+	# TODO: Join info
 	# If we're a client, we just hide and send our join info.
 	hide()
-	change_level(load("res://forest/Forest.tscn"))
+	change_level(path_to_level)
 	add_player_in_server(1)
 
 func start_game_client():
+	# TODO: Join info system
 	# If we're a client, we just hide and send our join info.
 	hide()
-
 
 func change_level(scene: PackedScene):
 	for c in world_ref.get_children():
@@ -128,8 +132,7 @@ func ready_server_world():
 			add_player_in_server(id)
 
 func add_player_in_server(id: int):
-	var character_scene = load("res://player/character_body_souls_base.tscn")
-	var character =  character_scene.instantiate()
+	var character =  path_to_character_body.instantiate()
 	character.name = str(id)
 	world_ref.add_child(character, true)
 
@@ -137,7 +140,6 @@ func delete_player_in_server(id: int):
 	var string_id = str(id)
 	if world_ref.get_node(string_id).is_in_group('Players'):
 		world_ref.get_node(string_id).queue_free()
-
 
 func _exit_tree():
 	if multiplayer.is_server():
@@ -150,6 +152,7 @@ func _exit_tree():
 	#for p in props:
 		#picker[p] = false
 
+# TODO: Should probably have the controls as % access as unique name so they can be re-parented
 func _on_nickname_text_changed(new_text):
 	if new_text != "":
 		$Control/MarginContainer/VBoxContainer/Join.disabled = false
@@ -158,4 +161,3 @@ func _on_nickname_text_changed(new_text):
 
 func _on_quit_pressed():
 	get_tree().quit()
-	pass # Replace with function body.

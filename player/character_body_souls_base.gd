@@ -166,7 +166,13 @@ func _ready():
 	#set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 	#set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 	
-	global_position = Vector3(0, 37.665, 0)
+	# CLIENT AUTHORATITIVE: 
+	set_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_physics_process(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+	set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())
+	
+	global_position = Vector3(0, 50.665, 0)
 
 	if anim_state_tree:
 		anim_state_tree.animation_measured.connect(_on_animation_measured)

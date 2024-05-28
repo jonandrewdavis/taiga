@@ -1,8 +1,11 @@
 @tool
 extends Node3D
 
+const middle_ignored = 15
+
 @export var generated_terrain: Node
 @export var player_node: Node3D
+
 @export var instance_amount : int = 100  # Number of instances to generate
 @export var generate_colliders: bool = false
 @export var collider_coverage_dist : float = 50
@@ -47,9 +50,20 @@ var v_scale: float = 1
 
 func _ready():
 	if Engine.is_editor_hint():
-		create_multimesh()
+		if heightmap && player_node:
+			print('TESTING INSTANCER')
+			global_position = Vector3(0,0,0)
+			create_multimesh()
 		return
 	else:
+		# TODO: new code and ONCHANGE from signal from player
+		#player_node = get_parent()
+		#assert(player_node != null)
+		#assert(generated_terrain != null)
+		#if player_node:
+			#global_position = Vector3(0,0,0)
+			#create_multimesh()
+		#return
 		global_position = Vector3(0,0,0)
 		var players = get_tree().get_nodes_in_group("Player");
 		if players.size():
@@ -90,11 +104,10 @@ func create_multimesh():
 	#wait for map to load before continuing
 	# AD: Changes to this logic in terms of where it gets it
 	if Engine.is_editor_hint():
-		await heightmap.changed
 		hmap_img = heightmap.get_image()
 	else:
 		# TODO: Get generated
-		hmap_img = generated_terrain.generated_heightmap
+		hmap_img = GlobalState.current_heightmap
 		#hmap_img = heightmap.get_image()
 		
 	if !hmap_img:
@@ -104,7 +117,6 @@ func create_multimesh():
 	#if !Engine.is_editor_hint():
 		#h_scale = generated_terrain.generated_scale # could be x or z, doesn not matter as they should be the same
 		#v_scale = generated_terrain.generated_scale
-
 
 	width = hmap_img.get_width()
 	height = hmap_img.get_height()
@@ -155,7 +167,8 @@ func distribute_meshes():
 		
 		x = pos.x 
 		z = pos.z 
-		
+	
+			
 		# Sample the heightmap texture to determine the Y position
 
 		var y = get_heightmap_y(x, z)
@@ -181,7 +194,9 @@ func distribute_meshes():
 		t = t.rotated_local(t.basis.y.normalized(),rot.y)
 		t = t.rotated_local(t.basis.z.normalized(),rot.z)
  
-		# Set the instance data
+		if ((z > 0 && z < middle_ignored) || (z < 0 && z > -(middle_ignored - 10))) == true:
+			continue
+			
 		multi_mesh.set_instance_transform(i, t.scaled_local(sc))
  
 		#Collisions
@@ -213,7 +228,7 @@ func get_heightmap_y(x, z):
 	
 	# NOTE: The secret key here was the scaling factor (* 300.0) for generated terrain
 	# TODO: Rename terrain_height to terrain_height (negative), cause I'm using to subtract
-	return (color.r * (generated_terrain.generated_scale * 1)) - terrain_height
+	return (color.r * (GlobalState.current_terrain_scale * 1)) - terrain_height
   
 func random(x,z):
 	var r = fposmod(sin(Vector2(x,z).dot(Vector2(12.9898,78.233)) * 43758.5453123),1.0)

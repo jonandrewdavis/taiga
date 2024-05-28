@@ -38,7 +38,7 @@ var current_cam_buffer = true
 
 # MULTIPLAYER: 
 func _enter_tree():
-	print('hmm', str(get_parent().name).to_int())
+	print('DEBUG - PLAYER ENTERING TREE: ', str(get_parent().name).to_int())
 	set_multiplayer_authority(str(get_parent().name).to_int())
 
 func _ready():
@@ -47,6 +47,7 @@ func _ready():
 	set_process_unhandled_input(get_multiplayer_authority() == multiplayer.get_unique_id())
 	set_process_input(get_multiplayer_authority() == multiplayer.get_unique_id())	
 	if is_multiplayer_authority():
+		vertical_offset = 2.0
 		ready_camera()
 
 func ready_camera():

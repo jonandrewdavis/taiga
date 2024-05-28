@@ -34,7 +34,7 @@ func create_instance():
 	if Engine.is_editor_hint():
 		pass
 	else: 
-		var get_new_map = ImageTexture.create_from_image(generated_terrain.generated_heightmap)
+		var get_new_map = ImageTexture.create_from_image(GlobalState.current_heightmap)
 		if !get_new_map:
 			return
 		process_material.set("shader_parameter/map_heightmap", get_new_map);

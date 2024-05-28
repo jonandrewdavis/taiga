@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://blt3rsecgpm8q"]
+
+[ext_resource type="Script" path="res://generative_level/static/InstancedRootNode.gd" id="1_3i4uo"]
+[ext_resource type="PackedScene" uid="uid://d0m30jimqmkf8" path="res://generative_level/static/pine_tree_large.tscn" id="2_agl8f"]
+
+[node name="InstancedRootNode" type="Node3D"]
+script = ExtResource("1_3i4uo")
+
+[node name="PineTreeLarge" parent="." instance=ExtResource("2_agl8f")]

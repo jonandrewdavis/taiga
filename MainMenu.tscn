@@ -8,7 +8,7 @@
 [node name="MainWorld" type="Node3D" parent="."]
 
 [node name="LevelSpawner" type="MultiplayerSpawner" parent="."]
-_spawnable_scenes = PackedStringArray("res://demo_level/world_basic.tscn")
+_spawnable_scenes = PackedStringArray("res://demo_level/world_basic.tscn", "res://forest/Forest.tscn")
 spawn_path = NodePath("../MainWorld")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="."]
@@ -17,7 +17,7 @@ spawn_path = NodePath("../MainWorld")
 
 [node name="MainMenu" type="CanvasLayer" parent="."]
 
-[node name="Control" type="Control" parent="MainMenu" node_paths=PackedStringArray("world_ref")]
+[node name="MainMenuScript" type="Control" parent="MainMenu" node_paths=PackedStringArray("world_ref")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,7 +28,7 @@ theme = ExtResource("1_uxrkp")
 script = ExtResource("1_r7uv3")
 world_ref = NodePath("../../MainWorld")
 
-[node name="Panel" type="Panel" parent="MainMenu/Control"]
+[node name="Panel" type="Panel" parent="MainMenu/MainMenuScript"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -37,7 +37,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_uxrkp")
 
-[node name="MarginContainer" type="MarginContainer" parent="MainMenu/Control"]
+[node name="MarginContainer" type="MarginContainer" parent="MainMenu/MainMenuScript"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 1
 anchors_preset = 8
@@ -57,50 +57,50 @@ theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Control/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/MainMenuScript/MarginContainer"]
 layout_mode = 2
 theme = ExtResource("1_uxrkp")
 theme_override_constants/separation = 12
 
-[node name="Taiga" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Taiga" type="Label" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 140
 text = "Taiga"
 horizontal_alignment = 1
 
-[node name="Label" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Nickname
 "
 
-[node name="Nickname" type="LineEdit" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Nickname" type="LineEdit" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Label2" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "IP"
 
-[node name="IP" type="LineEdit" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="IP" type="LineEdit" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_uxrkp")
 
-[node name="Host" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Host" type="Button" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme = ExtResource("1_uxrkp")
 text = "Host"
 
-[node name="Join" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Join" type="Button" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Join"
 
-[node name="Quit" type="Button" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Quit" type="Button" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Quit
 "
 
-[node name="Error" type="Label" parent="MainMenu/Control/MarginContainer/VBoxContainer"]
+[node name="Error" type="Label" parent="MainMenu/MainMenuScript/MarginContainer/VBoxContainer"]
 layout_mode = 2
 
-[connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Host" to="MainMenu/Control" method="_on_host_pressed"]
-[connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Join" to="MainMenu/Control" method="_on_join_pressed"]
-[connection signal="pressed" from="MainMenu/Control/MarginContainer/VBoxContainer/Quit" to="MainMenu/Control" method="_on_quit_pressed"]
+[connection signal="pressed" from="MainMenu/MainMenuScript/MarginContainer/VBoxContainer/Host" to="MainMenu/MainMenuScript" method="_on_host_pressed"]
+[connection signal="pressed" from="MainMenu/MainMenuScript/MarginContainer/VBoxContainer/Join" to="MainMenu/MainMenuScript" method="_on_join_pressed"]
+[connection signal="pressed" from="MainMenu/MainMenuScript/MarginContainer/VBoxContainer/Quit" to="MainMenu/MainMenuScript" method="_on_quit_pressed"]

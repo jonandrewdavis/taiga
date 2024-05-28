@@ -3,6 +3,8 @@
 [resource]
 code = "shader_type particles;
 
+uniform float middle_ignored = 12.0;
+
 uniform float instance_rows;
 uniform float instance_rot_randomize = 2.5;
 uniform float instance_spacing = 1.0;
@@ -27,6 +29,8 @@ uniform float __terrain_amplitude;
 uniform vec2 map_heightmap_size = vec2(2048.0, 2048.0);
 uniform vec2 map_normalmap_size = vec2(2048.0, 2048.0);
 uniform sampler2D map_clumpmap;
+
+
 
 float get_height(vec2 pos) {
 	pos -= 0.5 * map_heightmap_size;
@@ -93,6 +97,13 @@ void start() {
 	if (abs(pos.y) > _coverage_altitude*5.0+_coverage_range) {
 		pos.y = -10000.0;
 	} 	
+	
+	// TODO: Better way of hiding grass/instances from ROADWAY
+
+	if ((pos.z > 0.0 && pos.z < middle_ignored) || pos.z < 0.0 && pos.z > -(middle_ignored - 5.0)) {
+		pos.y = -10000.0;
+	} 	
+
 	
 	// clumping
 	vec3 clumps = texture(map_clumpmap, pos.zx).rgb;
