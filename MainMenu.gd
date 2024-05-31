@@ -6,8 +6,8 @@ const PORT = 9999
 @export var quick_quit_enabled = true
 @export var upnp_on = false
 
-#var path_to_level = preload("res://forest/Forest.tscn")
-var path_to_level = preload("res://demo_level/world_basic.tscn")
+var path_to_level = preload("res://forest/Forest.tscn")
+#var path_to_level = preload("res://demo_level/world_basic.tscn")
 var path_to_character_body = preload("res://player/character_body_souls_base.tscn")
 
 # TODO: Should probably have the controls as % access as unique name so they can be re-parented
