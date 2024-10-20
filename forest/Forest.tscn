@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://blp8d4os7dl3w"]
+[gd_scene load_steps=43 format=3 uid="uid://blp8d4os7dl3w"]
 
 [ext_resource type="Environment" uid="uid://cslvvwcb7yhg0" path="res://forest/ForestEnvironment.tres" id="1_hyo65"]
 [ext_resource type="Script" path="res://forest/Level.gd" id="1_llgak"]
@@ -141,6 +141,19 @@ heightmap_enabled = true
 heightmap_texture = ExtResource("19_mkqm5")
 uv1_scale = Vector3(1, 10, 1)
 
+[sub_resource type="SphereShape3D" id="SphereShape3D_ok210"]
+radius = 1.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_lujlx"]
+radius = 30.0
+height = 5000.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_itf68"]
+transparency = 2
+alpha_scissor_threshold = 0.22
+alpha_antialiasing_mode = 0
+albedo_color = Color(1, 0.341176, 1, 1)
+
 [node name="Forest" type="Node3D"]
 script = ExtResource("1_llgak")
 
@@ -194,7 +207,7 @@ instance_Z_rot = 3.14159
 rot_y_randomize = 10.0
 heightmap = SubResource("NoiseTexture2D_h75x1")
 instance_mesh = ExtResource("17_twwk4")
-update_frequency = 0.2
+update_frequency = 1.0
 
 [node name="PineTreeLarge" type="Node3D" parent="." node_paths=PackedStringArray("player_node")]
 script = ExtResource("6_j55yx")
@@ -245,6 +258,24 @@ path_continuous_u = true
 path_u_distance = 5.0
 path_joined = false
 material = SubResource("StandardMaterial3D_rkrad")
+
+[node name="Sensor" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Sensor"]
+shape = SubResource("SphereShape3D_ok210")
+
+[node name="Ignore" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ignore"]
+mesh = SubResource("CapsuleMesh_lujlx")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_itf68")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="Ignore"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 99.9467, 0, 0)
+mesh = SubResource("CapsuleMesh_lujlx")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_itf68")
 
 [connection signal="ready_bake" from="GeneratedTerrain3D" to="GeneratedTerrain3D/NavigationBaker" method="_on_generated_terrain_3d_ready_bake"]
 [connection signal="ready_bake" from="GeneratedTerrain3D" to="Path3D" method="_on_generated_terrain_3d_ready_bake"]

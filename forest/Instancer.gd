@@ -44,11 +44,16 @@ var v_scale: float = 1
 @onready var colliders_to_spawn: Array
 @onready var last_pos: Vector3
 @onready var first_update= true
- 
+
+@onready var forbidden = $"../Ignore" 
+
+var aabb_list: Array[AABB] = []
+
 # TODO: disable player & heightmap? or just like fill them by default? we will always programmatically
 # do it since this is a GENERATED terrain script.
 
 func _ready():
+	ready_aabb()	
 	if Engine.is_editor_hint():
 		if heightmap && player_node:
 			print('TESTING INSTANCER')
@@ -64,6 +69,7 @@ func _ready():
 			#global_position = Vector3(0,0,0)
 			#create_multimesh()
 		#return
+		
 		global_position = Vector3(0,0,0)
 		var players = get_tree().get_nodes_in_group("Player");
 		if players.size():
@@ -75,9 +81,14 @@ func _ready():
 			await get_tree().create_timer(2.0).timeout
 			_ready()	
 	
+func ready_aabb():
+	for child in forbidden.get_children():
+		aabb_list.push_front(child.global_transform * child.mesh.get_aabb())	
+		
 func create_multimesh():
 	
-	# NOTE DO NOT DO THIS FOR GENERATED TERRAIN!!!! h is shit. Z is necessary for MULTIPLIER
+	
+	# NOTE DO NOT DO THESE LINES FOR GENERATED TERRAIN!!!! h is shit. Z is necessary for MULTIPLIER
 	#grab horizontal scale on the terrain mesh so match the scale of the heightmap in case your terrain is resized
 	#h_scale = 1 # could be x or z, doesn not matter as they should be the same
 	#v_scale = 1
@@ -135,6 +146,7 @@ func create_multimesh():
 func _update():
 	#on each update, move the center to player		
 	self.global_position = Vector3(player_node.global_position.x,0.0,player_node.global_position.z).snapped(Vector3(1,0,1));
+
 	multi_mesh_instance.multimesh = distribute_meshes()
 	timer.wait_time = update_frequency
 	timer.start()
@@ -164,14 +176,33 @@ func distribute_meshes():
 		pos.z += random(pos.x,pos.z) * pos_randomize
 		pos.x -= pos_randomize * random(pos.x,pos.z)
 		pos.z -= pos_randomize * random(pos.x,pos.z)
-		
-		x = pos.x 
-		z = pos.z 
-	
+
+		# this instance is allowed. Assign and continue with height adjustment. 
+
+			
+		x = pos.x
+		z = pos.z			
 			
 		# Sample the heightmap texture to determine the Y position
 
 		var y = get_heightmap_y(x, z)
+
+ #		
+		#if ((z > 0 && z < middle_ignored) || (z < 0 && z > -(middle_ignored - 10))) == true:
+			##print('REMOVED A THING')
+			#continue
+		var skip = false
+		# see if it's overlapping
+		# TODO: Children in a node
+		for aabb in aabb_list:
+			
+			if (aabb.has_point(Vector3(x, y, z))):
+				skip = true
+				break
+
+		if skip == true:
+			continue
+		
 
  
 		var ori = Vector3(x, y, z)
@@ -193,9 +224,7 @@ func distribute_meshes():
 		t = t.rotated_local(t.basis.x.normalized(),rot.x)
 		t = t.rotated_local(t.basis.y.normalized(),rot.y)
 		t = t.rotated_local(t.basis.z.normalized(),rot.z)
- 
-		if ((z > 0 && z < middle_ignored) || (z < 0 && z > -(middle_ignored - 10))) == true:
-			continue
+
 			
 		multi_mesh.set_instance_transform(i, t.scaled_local(sc))
  
